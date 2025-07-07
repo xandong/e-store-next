@@ -1,6 +1,9 @@
 networks:
-  next-template-network:
-    name: next-template-network
+  e_store-app:
+    name: e_store-app
+
+volumes:
+  postgres-data: null
 
 services:
   next:
@@ -16,5 +19,29 @@ services:
     ports:
       - "3000:3000"
     networks:
-      - next-template-network
+      - e_store-app
     restart: unless-stopped
+
+  db:
+    image: postgres:14.18
+    restart: unless-stopped
+    networks:
+      - e_store-app
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+      - POSTGRES_USER=${DATABASE_USER}
+      - POSTGRES_DB=${DATABASE_NAME}
+    healthcheck:
+      test: pg_isready -U "${DATABASE_USER}" -d "${DATABASE_NAME}"
+      interval: 5s
+      timeout: 30s
+      retries: 3
+
+  adminer:
+    image: adminer
+    ports:
+      - "${ADMINER_FORWARD_PORT:-8088}:8080"
+    networks:
+      - e_store-app
