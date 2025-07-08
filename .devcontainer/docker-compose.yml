@@ -6,7 +6,7 @@ volumes:
   postgres-data: null
 
 services:
-  next:
+  app:
     build:
       context: ..
       dockerfile: .devcontainer/Dockerfile

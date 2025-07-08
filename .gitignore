@@ -9,7 +9,8 @@
 /src/types/generated
 # testing
 /coverage
-
+.env
+.env.local
 # next.js
 /.next/
 /out/
@@ -37,3 +38,5 @@ yarn-error.log*
 next-env.d.ts
 
 *storybook.log
+
+/src/generated/prisma
