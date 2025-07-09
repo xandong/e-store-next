@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "generate:types": "openapi-generator-cli generate -i openapi/api.yaml -g typescript-axios -o src/types/generated",
+    "generate:types": "openapi-generator-cli generate -i openapi/api.yaml -g typescript-axios -o src/types/api/generated",
     "dev": "next dev",
     "build": "next build",
     "test": "jest --passWithNoTests --maxWorkers=50%",

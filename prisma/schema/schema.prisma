@@ -6,7 +6,7 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../src/types/prisma/generated/"
+  output   = "../../src/types/prisma/generated/"
   previewFeatures = ["multiSchema"]
 }
 
