@@ -1,5 +1,5 @@
 import { ProductCard } from "@/app/(app)/(home)/product-card"
-import { Category, Product } from "@/types/generated"
+
 import {
   Carousel,
   CarouselContent,
@@ -7,6 +7,7 @@ import {
   CarouselNext,
   CarouselPrevious
 } from "../_ui/carousel"
+import { Category, Product } from "@/types/api/generated"
 
 interface SectionProps {
   products: Product[]
@@ -16,7 +17,7 @@ interface SectionProps {
 export const Section = ({ category, products }: SectionProps) => {
   return (
     <section className="w-full">
-      <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold mb-6 text-center">
+      <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold mb-6 text-start">
         {category?.name}
       </h2>
 
@@ -32,14 +33,15 @@ export const Section = ({ category, products }: SectionProps) => {
               </CarouselItem>
             ))}
           </CarouselContent>
+
           <CarouselPrevious
-            variant={"default"}
-            className="absolute left-0 top-1/3 transform -translate-y-1/2 shadow-2xl"
+            variant={"secondary"}
+            className="absolute left-1 top-1/3 transform -translate-y-1/2 shadow-2xl"
           />
 
           <CarouselNext
             variant={"secondary"}
-            className="absolute right-0 top-1/3 transform -translate-y-1/2 shadow-2xl"
+            className="absolute right-1 top-1/3 transform -translate-y-1/2 shadow-2xl"
           />
         </Carousel>
       </div>

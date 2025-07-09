@@ -1,4 +1,4 @@
-import { storeApi } from "@/services/storeApi"
+import { storeApi } from "@/services/api"
 import { PrismaClient } from "@/types/prisma/generated"
 
 const prisma = new PrismaClient()

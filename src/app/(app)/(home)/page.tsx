@@ -1,24 +1,27 @@
+import { getCategoriesListAction } from "@/app/_actions/categories/getCategoriesList"
+import { getProductsListAction } from "@/app/_actions/products/getProductsList"
+
 import { AppLayout } from "@/components/layout/app-layout"
-import { getProductsList } from "../../_actions/products/getProductsList"
 import { Section } from "@/components/misc/section"
 
 export const revalidate = 60
 
 export default async function Home() {
-  const products = await getProductsList()
-  // const categories = products.reduce<string[]>((acc, product) => {
-  //   if (!product.category) return acc
-  //   if (!acc.includes(product.category)) {
-  //     acc.push(product.category)
-  //   }
-  //   return acc
-  // }, [])
+  const products = await getProductsListAction()
+  const categories = await getCategoriesListAction()
 
   return (
     <AppLayout>
       <div className="w-full flex flex-col p-4 gap-8">
-        <Section products={products} />
-        <Section products={products} />
+        {categories.map((category) => (
+          <Section
+            key={category.id}
+            category={category}
+            products={products.filter(
+              (product) => product.category.slug === category.slug
+            )}
+          />
+        ))}
       </div>
     </AppLayout>
   )

@@ -1,5 +1,5 @@
-import { storeApi } from "@/services/storeApi"
+import { productsApi } from "@/services/api"
 
-export const getProductById = async (id: number) => {
-  return (await storeApi.productsIdGet(id)).data
+export const getProductByIdAction = async (id: number) => {
+  return (await productsApi.getProductById(id)).data
 }

@@ -14,7 +14,6 @@ import { PasswordInput } from "@/components/_ui/input-password"
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -23,11 +22,11 @@ import {
 
 const signInSchema = z.object({
   email: z
-    .string({ message: "Invalid email address" })
-    .email("Invalid email address"),
+    .string({ message: "Insira um email válido" })
+    .email("Insira um email válido"),
   password: z
-    .string({ message: "Password is required" })
-    .min(8, "Password must be at least 8 characters")
+    .string({ message: "A senha é obrigatória" })
+    .min(8, "O limite mínimo de caracteres é 8")
 })
 
 type SignInSchema = z.infer<typeof signInSchema>
@@ -74,23 +73,23 @@ export default function SignIn() {
             )}
           />
 
-          <div className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-1.5 mb-10">
             <FormField
               name="password"
               control={form.control}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel>Senha</FormLabel>
                   <FormControl>
                     <PasswordInput {...field} autoComplete="password" />
                   </FormControl>
 
                   <FormMessage />
-                  <FormDescription>
+                  {/* <FormDescription>
                     <Link href={"/reset-password"} className="text-neutral-500">
-                      Forgot password?
+                      Esqueceu a senha?
                     </Link>
-                  </FormDescription>
+                  </FormDescription> */}
                 </FormItem>
               )}
             />
@@ -103,9 +102,9 @@ export default function SignIn() {
       </Form>
 
       <div className="pt-6 text-neutral-400 flex justify-center gap-1">
-        Don't have an account?
+        Não tem uma conta?
         <Link href={"/sign-up"} className="font-semibold">
-          Sign up
+          Criar conta
         </Link>
       </div>
     </AuthLayout>

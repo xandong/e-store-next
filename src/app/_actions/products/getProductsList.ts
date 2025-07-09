@@ -1,5 +1,5 @@
-import { storeApi } from "@/services/storeApi"
+import { productsApi } from "@/services/api"
 
-export const getProductsList = async () => {
-  return (await storeApi.productsGet()).data
+export const getProductsListAction = async () => {
+  return (await productsApi.getProducts()).data
 }

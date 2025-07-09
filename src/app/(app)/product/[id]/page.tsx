@@ -1,4 +1,4 @@
-import { getProductById } from "@/app/_actions/products/getProductById"
+import { getProductByIdAction } from "@/app/_actions/products/getProductById"
 import { AppLayout } from "@/components/layout/app-layout"
 import { Gallery } from "@/components/misc/gallery"
 
@@ -7,7 +7,7 @@ export default async function ProductPage({
 }: {
   params: { id: number }
 }) {
-  const product = await getProductById(params.id)
+  const product = await getProductByIdAction(params.id)
 
   return (
     <AppLayout>
@@ -15,14 +15,6 @@ export default async function ProductPage({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
           <div className="relative aspect-[4/3] w-full rounded-xl overflow-hidden shadow-sm">
             <Gallery images={product.images || []} />
-            {/* <Image
-              src={product.images?.[0] || "/placeholder.png"}
-              alt={product.title || "Imagem do produto"}
-              fill
-              priority
-              sizes="(max-width: 768px) 100vw, 50vw"
-              className="object-cover"
-            /> */}
           </div>
 
           <article className="flex flex-col justify-center space-y-4">
