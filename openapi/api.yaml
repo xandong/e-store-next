@@ -1,99 +1,586 @@
+# api-spec.yml
+# Especificação OpenAPI 3.0 para https://api.escuelajs.co/api/v1
+
 openapi: 3.0.0
 info:
-  title: EscuelaJS Fake Store API
-  version: "1.0"
-servers:
-  - url: https://api.escuelajs.co/api/v1
+  title: platzi-store
+  description: Example API for testing and learning based on Platzi Store.
+  version: 0.1.0
+tags:
+  - name: Auth
+    description: ""
+  - name: Brands
+    description: ""
+  - name: Categories
+    description: ""
+  - name: Files
+    description: ""
+  - name: Products
+    description: ""
+  - name: Users
+    description: ""
 paths:
-  /products:
+  /auth/login:
+    post:
+      operationId: authController_login
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginAuthDto"
+      responses:
+        "201":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+      tags:
+        - Auth
+  /auth/profile:
     get:
-      summary: Lista produtos com paginação
-      parameters:
-        - name: offset
-          in: query
-          required: false
-          schema:
-            type: integer
-        - name: limit
-          in: query
-          required: false
-          schema:
-            type: integer
+      operationId: authController_profile
+      parameters: []
       responses:
         "200":
-          description: Lista de produtos
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+      tags:
+        - Auth
+  /brands:
+    get:
+      operationId: brandsController_findAll
+      parameters: []
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Brand"
+      tags:
+        - Brands
+    post:
+      operationId: brandsController_create
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateBrandDto"
+      responses:
+        "201":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Brand"
+      tags:
+        - Brands
+  "/brands/{id}":
+    get:
+      operationId: brandsController_findOne
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Brand"
+      tags:
+        - Brands
+    patch:
+      operationId: brandsController_update
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateBrandDto"
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Brand"
+      tags:
+        - Brands
+    delete:
+      operationId: brandsController_remove
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: boolean
+      tags:
+        - Brands
+  /categories:
+    get:
+      operationId: categoriesController_findAll
+      parameters: []
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Category"
+      tags:
+        - Categories
+    post:
+      operationId: categoriesController_create
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCategoryDto"
+      responses:
+        "201":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Category"
+      tags:
+        - Categories
+  "/categories/{id}":
+    get:
+      operationId: categoriesController_findOne
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Category"
+      tags:
+        - Categories
+    patch:
+      operationId: categoriesController_update
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateCategoryDto"
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Category"
+      tags:
+        - Categories
+    delete:
+      operationId: categoriesController_remove
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: boolean
+      tags:
+        - Categories
+  /files/upload:
+    post:
+      operationId: filesController_uploadFile
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        "201":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: string
+      tags:
+        - Files
+  /products:
+    get:
+      operationId: productsController_findAll
+      parameters:
+        - name: limit
+          required: false
+          in: query
+          schema:
+            type: number
+            default: 10
+        - name: offset
+          required: false
+          in: query
+          schema:
+            type: number
+            default: 0
+      responses:
+        "200":
+          description: ""
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: "#/components/schemas/Product"
+      tags:
+        - Products
     post:
-      summary: Cria um produto
+      operationId: productsController_create
+      parameters: []
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ProductCreate"
+              $ref: "#/components/schemas/CreateProductDto"
       responses:
         "201":
-          description: Produto criado
+          description: ""
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Product"
-  /products/{id}:
-    parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: integer
+      tags:
+        - Products
+  "/products/{id}":
     get:
-      summary: Detalhes de um produto
+      operationId: productsController_findOne
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
       responses:
         "200":
-          description: Produto
+          description: ""
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Product"
-    put:
-      summary: Atualiza um produto
+      tags:
+        - Products
+    patch:
+      operationId: productsController_update
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ProductCreate"
+              $ref: "#/components/schemas/UpdateProductDto"
       responses:
         "200":
-          description: Produto atualizado
+          description: ""
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Product"
+      tags:
+        - Products
     delete:
-      summary: Remove um produto
+      operationId: productsController_remove
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
       responses:
         "200":
-          description: Sucesso
+          description: ""
           content:
             application/json:
               schema:
                 type: boolean
-
+      tags:
+        - Products
+  /users:
+    get:
+      operationId: usersController_findAll
+      parameters: []
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+      tags:
+        - Users
+    post:
+      operationId: usersController_create
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateUserDto"
+      responses:
+        "201":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+      tags:
+        - Users
+  "/users/{id}":
+    get:
+      operationId: usersController_findOne
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+      tags:
+        - Users
+    patch:
+      operationId: usersController_update
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUserDto"
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+      tags:
+        - Users
+    delete:
+      operationId: usersController_remove
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: boolean
+      tags:
+        - Users
 components:
   schemas:
+    LoginAuthDto:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+      required:
+        - email
+        - password
+    AuthResponse:
+      type: object
+      properties:
+        access_token:
+          type: string
+        refresh_token:
+          type: string
+      required:
+        - access_token
+        - refresh_token
+    Role:
+      enum:
+        - admin
+        - customer
+      type: string
+    User:
+      type: object
+      properties:
+        id:
+          type: number
+        email:
+          type: string
+        password:
+          type: string
+        name:
+          type: string
+        role:
+          $ref: "#/components/schemas/Role"
+        avatar:
+          type: string
+        creationAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - email
+        - password
+        - name
+        - role
+        - avatar
+        - creationAt
+        - updatedAt
+    Brand:
+      type: object
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+        image:
+          type: string
+        creationAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - image
+        - creationAt
+        - updatedAt
+    CreateBrandDto:
+      type: object
+      properties:
+        name:
+          type: string
+        image:
+          type: string
+      required:
+        - name
+        - image
+    UpdateBrandDto:
+      type: object
+      properties:
+        name:
+          type: string
+        image:
+          type: string
     Category:
       type: object
       properties:
         id:
-          type: integer
+          type: number
         name:
           type: string
-        slug:
+        image:
+          type: string
+        creationAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - image
+        - creationAt
+        - updatedAt
+    CreateCategoryDto:
+      type: object
+      properties:
+        name:
+          type: string
+        image:
+          type: string
+      required:
+        - name
+        - image
+    UpdateCategoryDto:
+      type: object
+      properties:
+        name:
           type: string
         image:
           type: string
@@ -101,10 +588,8 @@ components:
       type: object
       properties:
         id:
-          type: integer
+          type: number
         title:
-          type: string
-        slug:
           type: string
         price:
           type: number
@@ -114,11 +599,25 @@ components:
           type: array
           items:
             type: string
+        creationAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
         category:
           $ref: "#/components/schemas/Category"
-    ProductCreate:
+      required:
+        - id
+        - title
+        - price
+        - description
+        - images
+        - creationAt
+        - updatedAt
+        - category
+    CreateProductDto:
       type: object
-      required: [title, price, description, categoryId]
       properties:
         title:
           type: string
@@ -127,4 +626,61 @@ components:
         description:
           type: string
         categoryId:
-          type: integer
+          type: number
+        images:
+          type: array
+          items:
+            type: string
+      required:
+        - title
+        - price
+        - description
+        - categoryId
+        - images
+    UpdateProductDto:
+      type: object
+      properties:
+        title:
+          type: string
+        price:
+          type: number
+        description:
+          type: string
+        categoryId:
+          type: number
+        images:
+          type: array
+          items:
+            type: string
+    CreateUserDto:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        avatar:
+          type: string
+        role:
+          $ref: "#/components/schemas/Role"
+      required:
+        - name
+        - email
+        - password
+        - avatar
+        - role
+    UpdateUserDto:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        avatar:
+          type: string
+        role:
+          $ref: "#/components/schemas/Role"
