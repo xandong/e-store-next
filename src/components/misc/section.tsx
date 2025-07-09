@@ -15,7 +15,7 @@ interface SectionProps {
 
 export const Section = ({ category, products }: SectionProps) => {
   return (
-    <section className="w-full px-4 py-8">
+    <section className="w-full">
       <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold mb-6 text-center">
         {category?.name}
       </h2>
@@ -32,8 +32,15 @@ export const Section = ({ category, products }: SectionProps) => {
               </CarouselItem>
             ))}
           </CarouselContent>
-          <CarouselPrevious className="absolute left-0 top-1/2 transform -translate-y-1/2" />
-          <CarouselNext className="absolute right-0 top-1/2 transform -translate-y-1/2" />
+          <CarouselPrevious
+            variant={"default"}
+            className="absolute left-0 top-1/3 transform -translate-y-1/2 shadow-2xl"
+          />
+
+          <CarouselNext
+            variant={"secondary"}
+            className="absolute right-0 top-1/3 transform -translate-y-1/2 shadow-2xl"
+          />
         </Carousel>
       </div>
     </section>
