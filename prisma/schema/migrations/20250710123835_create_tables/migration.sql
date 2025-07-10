@@ -26,7 +26,7 @@ CREATE TABLE "product_items" (
     "id" TEXT NOT NULL,
     "price" INTEGER NOT NULL,
     "quantity" INTEGER NOT NULL,
-    "productId" INTEGER NOT NULL,
+    "productId" TEXT NOT NULL,
     "cartId" TEXT,
     "purchaseId" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -36,12 +36,13 @@ CREATE TABLE "product_items" (
 
 -- CreateTable
 CREATE TABLE "products" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "slug" TEXT NOT NULL,
     "price" INTEGER NOT NULL,
     "description" TEXT,
     "images" TEXT[],
+    "externalId" TEXT,
     "categoryId" INTEGER,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 

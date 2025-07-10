@@ -3,7 +3,7 @@ model ProductItem {
   price    Int
   quantity Int
 
-  productId Int
+  productId String
   product   Product? @relation(fields: [productId], references: [id])
 
   cartId String?

@@ -1,7 +1,8 @@
 model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
+  id         Int     @id @default(autoincrement())
+  externalId String  @unique
+  email      String  @unique
+  name       String?
 
   createdAt DateTime   @default(now())
   Cart      Cart?

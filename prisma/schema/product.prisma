@@ -1,11 +1,12 @@
 model Product {
-  id          Int      @id @default(autoincrement())
+  id          String   @id @default(uuid())
   title       String
   slug        String
   price       Int
   description String?
   images      String[]
 
+  externalId String?
   categoryId Int?
   category   Category? @relation(fields: [categoryId], references: [id])
 
