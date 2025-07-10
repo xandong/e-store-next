@@ -1,7 +1,7 @@
 import Link from "next/link"
 import Image from "next/image"
-
-import { Product } from "@/types/generated"
+import { Product } from "@/types/api/generated"
+import { Badge } from "@/components/_ui/badge"
 
 interface ProductCardProps {
   product: Product
@@ -12,7 +12,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
     <Link
       href={`/product/${product.id}`}
       key={product.id}
-      className="max-w-xs w-full bg-white dark:bg-zinc-900 rounded-2xl shadow-md hover:shadow-lg transition-shadow overflow-hidden"
+      className="max-w-xs w-full bg-white rounded-2xl shadow-md hover:shadow-lg transition-shadow overflow-hidden"
     >
       <Image
         src={product.images?.[0] || ""}
@@ -21,7 +21,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
         height={192}
         className="w-full h-auto object-cover rounded-xl"
       />
-      <div className="p-4">
+      <div className="py-4">
         <h2 className="text-sm md:text-lg font-semibold text-zinc-800 dark:text-zinc-100">
           {product.title}
         </h2>
@@ -32,9 +32,9 @@ export const ProductCard = ({ product }: ProductCardProps) => {
           ${product.price?.toFixed(2)}
         </p>
         {product.category && (
-          <span className="inline-block mt-2 text-xs text-white bg-indigo-500 rounded-full px-3 py-1">
+          <Badge variant="default" className="mt-2">
             {product.category.name}
-          </span>
+          </Badge>
         )}
       </div>
     </Link>

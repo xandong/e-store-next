@@ -1,4 +1,5 @@
 import { getProductByIdAction } from "@/app/_actions/products/getProductById"
+import { Badge } from "@/components/_ui/badge"
 import { AppLayout } from "@/components/layout/app-layout"
 import { Gallery } from "@/components/misc/gallery"
 
@@ -13,7 +14,7 @@ export default async function ProductPage({
     <AppLayout>
       <section className="max-w-6xl mx-auto p-6 md:p-10">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-          <div className="relative aspect-[4/3] w-full rounded-xl overflow-hidden shadow-sm">
+          <div className="relative w-full rounded-xl overflow-hidden shadow-sm">
             <Gallery images={product.images || []} />
           </div>
 
@@ -23,16 +24,16 @@ export default async function ProductPage({
             </h1>
 
             {product.category && (
-              <span className="inline-block w-fit bg-indigo-500 text-white text-xs font-medium uppercase tracking-wide px-3 py-1 rounded-full">
+              <Badge variant="default" className="mt-2">
                 {product.category.name}
-              </span>
+              </Badge>
             )}
 
             <p className="text-lg text-zinc-700 dark:text-zinc-300 leading-relaxed">
               {product.description}
             </p>
 
-            <p className="text-2xl font-semibold text-indigo-600 dark:text-indigo-400">
+            <p className="text-2xl font-semibold">
               ${product.price?.toFixed(2)}
             </p>
 

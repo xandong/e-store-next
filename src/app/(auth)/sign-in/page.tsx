@@ -51,7 +51,7 @@ export default function SignIn() {
 
   return (
     <AuthLayout>
-      <h1 className="font-bold text-2xl mb-8">Login</h1>
+      <h1 className="font-extrabold text-2xl mb-8">Login</h1>
 
       <Form {...form}>
         <form
