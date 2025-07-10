@@ -1,8 +1,9 @@
+/* eslint-disable @next/next/no-img-element */
+/* eslint-disable react/jsx-no-comment-textnodes */
 "use client"
 
 import { useMemo } from "react"
 import Link from "next/link"
-import Image from "next/image"
 
 import {
   Menubar,
@@ -19,9 +20,9 @@ import { User } from "@supabase/supabase-js"
 export const Navbar = ({ user }: { user: User | null }) => {
   const { firstNameFirstLetter, lastNameFirstLetter } = useMemo(() => {
     const firstNameFirstLetter =
-      user?.app_metadata.name?.split(" ")[0].split("")[0] || "Usuário"
+      user?.user_metadata.name?.split(" ")[0].split("")[0] || "Usuário"
     const lastNameFirstLetter =
-      user?.app_metadata.name?.split(" ")[1].split("")[0] || ""
+      user?.user_metadata.name?.split(" ")[1].split("")[0] || ""
 
     return {
       firstNameFirstLetter,
@@ -34,7 +35,7 @@ export const Navbar = ({ user }: { user: User | null }) => {
       `https://ui-avatars.com/api/?name=${firstNameFirstLetter}%20${lastNameFirstLetter}`,
     [firstNameFirstLetter, lastNameFirstLetter]
   )
-
+  console.log({ url })
   return (
     <nav>
       <ul className="flex items-center gap-1">
@@ -43,9 +44,9 @@ export const Navbar = ({ user }: { user: User | null }) => {
             <Menubar className="bg-transparent border-none focus:bg-transparent p-0 rounded-full">
               <MenubarMenu>
                 <MenubarTrigger className="bg-transparent p-1 rounded-full">
-                  <Image
+                  <img
                     src={url}
-                    alt={user.app_metadata.name || "User Avatar"}
+                    alt={"??"}
                     width={32}
                     height={32}
                     className="rounded-full"
@@ -55,7 +56,7 @@ export const Navbar = ({ user }: { user: User | null }) => {
                 <MenubarContent className="mr-4 max-w-56">
                   <div className="p-2">
                     <span className="text-wrap">
-                      Olá, {user.app_metadata.name}
+                      Olá, {user.user_metadata.name}
                     </span>
                   </div>
 

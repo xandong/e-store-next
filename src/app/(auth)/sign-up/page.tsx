@@ -71,12 +71,16 @@ export default function SignUp() {
 
     setLoading(false)
 
-    if (result.error) {
+    if (result?.error) {
+      if (result.error.match(/already registered/i)) {
+        toast.error("Email já cadastrado")
+        return
+      }
       toast.error(result.error)
       return
     }
 
-    toast.success("Verifique seu email para ativar sua conta")
+    toast.success("Contra criada com sucesso! Seja bem vindo!")
   }, [])
 
   return (
