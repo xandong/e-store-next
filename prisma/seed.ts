@@ -1,11 +1,11 @@
-import { storeApi } from "@/services/api"
+import { productsApi } from "@/services/api"
 import { PrismaClient } from "@/types/prisma/generated"
 
 const prisma = new PrismaClient()
 
 const main = async () => {
   try {
-    const response = await storeApi.productsGet()
+    const response = await productsApi.getProducts()
     console.log({ data: response.data })
 
     // const categories = await prisma.$transaction([

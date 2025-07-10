@@ -1,0 +1,27 @@
+model Purchase {
+  id     String         @id @default(uuid())
+  status PurchaseStatus @default(PENDING)
+
+  user         User          @relation(fields: [userId], references: [id])
+  productItems ProductItem[]
+
+  createdAt DateTime @default(now())
+  userId    Int
+
+  @@map("purchases")
+}
+
+enum PurchaseStatus {
+  PENDING
+  PAYED
+  SHIPPED
+  DELIVERED
+  CANCELED
+  REFUNDED
+  FAILED
+  REFUND_PENDING
+  REFUND_FAILED
+  REFUND_CANCELED
+  REFUND_REJECTED
+  REFUND_PENDING_APPROVAL
+}

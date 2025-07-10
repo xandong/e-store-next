@@ -23,7 +23,7 @@ export const Section = ({ category, products }: SectionProps) => {
 
       <div className="relative w-full max-w-full mx-auto">
         <Carousel opts={{ align: "start" }} className="w-full">
-          <CarouselContent className=" gap-1 sm:gap-4">
+          <CarouselContent className="">
             {products.map((product) => (
               <CarouselItem
                 key={product.id!}

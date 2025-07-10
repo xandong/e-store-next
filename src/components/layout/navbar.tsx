@@ -4,7 +4,17 @@
 
 import { useMemo } from "react"
 import Link from "next/link"
+import { User } from "@supabase/supabase-js"
+import { ShoppingCartIcon } from "lucide-react"
 
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger
+} from "../_ui/sheet"
 import {
   Menubar,
   MenubarContent,
@@ -15,7 +25,6 @@ import {
 } from "../_ui/menubar"
 import { LogoutButton } from "./logout-button"
 import { Button } from "../_ui/button"
-import { User } from "@supabase/supabase-js"
 
 export const Navbar = ({ user }: { user: User | null }) => {
   const { firstNameFirstLetter, lastNameFirstLetter } = useMemo(() => {
@@ -35,10 +44,24 @@ export const Navbar = ({ user }: { user: User | null }) => {
       `https://ui-avatars.com/api/?name=${firstNameFirstLetter}%20${lastNameFirstLetter}`,
     [firstNameFirstLetter, lastNameFirstLetter]
   )
-  console.log({ url })
+
   return (
     <nav>
-      <ul className="flex items-center gap-1">
+      <ul className="flex items-center gap-2">
+        <Sheet>
+          <SheetTrigger>
+            <ShoppingCartIcon className="text-zinc-700" />
+          </SheetTrigger>
+          <SheetContent>
+            <SheetHeader>
+              <SheetTitle>Meu carrinho</SheetTitle>
+              <SheetDescription>
+                Nenhum produto adicionado ainda
+              </SheetDescription>
+            </SheetHeader>
+          </SheetContent>
+        </Sheet>
+
         {user ? (
           <>
             <Menubar className="bg-transparent border-none focus:bg-transparent p-0 rounded-full">

@@ -8,4 +8,9 @@ model Product {
 
   categoryId Int?
   category   Category? @relation(fields: [categoryId], references: [id])
+
+  createdAt   DateTime      @default(now())
+  ProductItem ProductItem[]
+
+  @@map("products")
 }
