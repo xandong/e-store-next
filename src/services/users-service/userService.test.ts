@@ -48,7 +48,7 @@ describe("UserService", () => {
       }
       ;(mockPrisma.user.findUnique as jest.Mock).mockResolvedValue(mockUser)
 
-      const result = await userService.getUserById(1)
+      const result = await userService.getUserByIds(1)
 
       expect(mockPrisma.user.findUnique).toHaveBeenCalledWith({
         where: { id: 1 }
@@ -59,7 +59,7 @@ describe("UserService", () => {
     it("should return null when user not found", async () => {
       ;(mockPrisma.user.findUnique as jest.Mock).mockResolvedValue(null)
 
-      const result = await userService.getUserById(99)
+      const result = await userService.getUserByIds(99)
 
       expect(mockPrisma.user.findUnique).toHaveBeenCalledWith({
         where: { id: 99 }
@@ -73,7 +73,7 @@ describe("UserService", () => {
         new Error(errorMessage)
       )
 
-      await expect(userService.getUserById(1)).rejects.toThrow(
+      await expect(userService.getUserByIds(1)).rejects.toThrow(
         "Não foi possível buscar o usuário."
       )
       expect(mockPrisma.user.findUnique).toHaveBeenCalledWith({

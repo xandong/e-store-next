@@ -13,8 +13,21 @@ export class UserService {
    * @param id O ID do usuário a ser buscado.
    * @returns O usuário encontrado ou null se não existir.
    */
-  async getUserById(id: number) {
+  async getUserByIds(id?: number, externalId?: string) {
     try {
+      if (!id && !externalId) {
+        throw new Error("ID do usuário não fornecido.")
+      }
+
+      if (externalId) {
+        const user = await this.prisma.user.findUnique({
+          where: {
+            externalId
+          }
+        })
+        return user
+      }
+
       const user = await this.prisma.user.findUnique({
         where: {
           id
@@ -41,11 +54,19 @@ export class UserService {
     }
   }
 
-  // Você pode adicionar outros métodos aqui, como createUser, updateUser, deleteUser, etc.
-  // async createUser(data: Prisma.UserCreateInput) { ... }
+  async createUser(data: Prisma.UserCreateInput) {
+    try {
+      const user = await this.prisma.user.create({ data })
+
+      return user
+    } catch (error) {
+      console.error("Falha ao criar usuário:", error)
+      throw new Error("Não foi possível criar o usuário.")
+    }
+  }
 }
 
 import { prisma } from "@/lib/prisma"
-import { PrismaClient } from "@/types/prisma/generated"
+import { Prisma, PrismaClient } from "@/types/prisma/generated"
 
 export const userService = new UserService(prisma)
