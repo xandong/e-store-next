@@ -53,6 +53,7 @@ CREATE TABLE "products" (
 CREATE TABLE "purchases" (
     "id" TEXT NOT NULL,
     "status" "PurchaseStatus" NOT NULL DEFAULT 'PENDING',
+    "total" INTEGER NOT NULL DEFAULT 0,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "userId" INTEGER NOT NULL,
 
@@ -62,6 +63,7 @@ CREATE TABLE "purchases" (
 -- CreateTable
 CREATE TABLE "users" (
     "id" SERIAL NOT NULL,
+    "externalId" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "name" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -77,6 +79,9 @@ CREATE UNIQUE INDEX "categories_name_key" ON "categories"("name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "categories_slug_key" ON "categories"("slug");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "users_externalId_key" ON "users"("externalId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
