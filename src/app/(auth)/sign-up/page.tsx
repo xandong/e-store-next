@@ -20,6 +20,8 @@ import { Button } from "@/components/_ui/button"
 import { Input } from "@/components/_ui/input"
 import { z } from "zod"
 import { PasswordInput } from "@/components/_ui/input-password"
+import { signupAction } from "@/app/_actions/auth/register"
+import { toast } from "sonner"
 
 const signUpSchema = z
   .object({
@@ -63,8 +65,18 @@ export default function SignUp() {
 
   const onSubmit = useCallback(async (formData: SignUpSchema) => {
     const data = signUpSchema.parse(formData)
-    console.log(data)
+
     setLoading(true)
+    const result = await signupAction(data)
+
+    setLoading(false)
+
+    if (result.error) {
+      toast.error(result.error)
+      return
+    }
+
+    toast.success("Verifique seu email para ativar sua conta")
   }, [])
 
   return (

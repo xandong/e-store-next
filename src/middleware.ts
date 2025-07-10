@@ -1,35 +1,10 @@
-import { NextResponse, type NextRequest } from "next/server"
-
-const publicRoutes = ["/sign-in", "/sign-up", "/reset-password"]
+import { type NextRequest } from "next/server"
+import { updateSession } from "./services/supabase/middleware"
 
 export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl
-  const accessToken = request.cookies.get("access_token")?.value
+  const sessionResponse = await updateSession(request)
 
-  if (publicRoutes.some((path) => pathname.startsWith(path))) {
-    return NextResponse.next()
-  }
-
-  if (!accessToken) {
-    return NextResponse.redirect(new URL("/sign-in", request.url))
-  }
-
-  // try {
-  //   // Validate the token by fetching the user's profile
-  //   await authenticationApi.authenticationControllerGetProfile({
-  //     headers: {
-  //       Authorization: `Bearer ${accessToken}`
-  //     }
-  //   })
-  // } catch (error) {
-  //   // If the token is invalid, redirect to the sign-in page
-  //   const response = NextResponse.redirect(new URL("/sign-in", request.url))
-  //   // Clear the invalid token
-  //   response.cookies.delete("access_token")
-  //   return response
-  // }
-
-  return NextResponse.next()
+  return sessionResponse
 }
 
 export const config = {

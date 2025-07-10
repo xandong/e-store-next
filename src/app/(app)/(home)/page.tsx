@@ -12,7 +12,7 @@ export default async function Home() {
 
   return (
     <AppLayout>
-      <div className="w-full flex flex-col p-4 gap-8">
+      <div className="w-full flex flex-col p-4 gap-8 my-6">
         {categories.map((category) => (
           <Section
             key={category.id}

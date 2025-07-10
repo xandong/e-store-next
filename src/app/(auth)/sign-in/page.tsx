@@ -8,7 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { Loader2 } from "lucide-react"
 
-import { login } from "@/_actions/auth/login"
+import { loginAction } from "@/app/_actions/auth/login"
 import { AuthLayout } from "@/components/layout/auth-layout"
 import { Button } from "@/components/_ui/button"
 import { Input } from "@/components/_ui/input"
@@ -16,12 +16,13 @@ import { PasswordInput } from "@/components/_ui/input-password"
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage
 } from "@/components/_ui/form"
-import { useToast } from "@/components/_ui/use-toast"
+import { toast } from "sonner"
 
 const signInSchema = z.object({
   email: z
@@ -36,7 +37,6 @@ type SignInSchema = z.infer<typeof signInSchema>
 
 export default function SignIn() {
   const [loading, setLoading] = useState(false)
-  const { toast } = useToast()
   const router = useRouter()
   const form = useForm<SignInSchema>({
     resolver: zodResolver(signInSchema),
@@ -49,25 +49,22 @@ export default function SignIn() {
 
   const onSubmit = useCallback(
     async (formData: SignInSchema) => {
-      setLoading(true)
-      const result = await login(formData)
+      const data = signInSchema.parse(formData)
 
-      if (result.success) {
-        toast({
-          title: "Login bem-sucedido!",
-          description: "Você será redirecionado em breve."
-        })
-        router.push("/")
-      } else {
-        toast({
-          title: "Erro ao fazer login",
-          description: result.message,
-          variant: "destructive"
-        })
-        setLoading(false)
+      setLoading(true)
+      const result = await loginAction(data)
+
+      setLoading(false)
+
+      if (result?.error) {
+        toast.error("Erro ao fazer login")
+        return
       }
+
+      toast.success("Login bem-sucedido!")
+      router.push("/")
     },
-    [router, toast]
+    [router]
   )
 
   return (
@@ -106,11 +103,15 @@ export default function SignIn() {
                   </FormControl>
 
                   <FormMessage />
-                  {/* <FormDescription>
-                    <Link href={"/reset-password"} className="text-neutral-500">
+                  <FormDescription>
+                    <Link
+                      href={"/reset-password"}
+                      aria-disabled
+                      className="text-neutral-500"
+                    >
                       Esqueceu a senha?
                     </Link>
-                  </FormDescription> */}
+                  </FormDescription>
                 </FormItem>
               )}
             />
