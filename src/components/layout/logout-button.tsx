@@ -2,9 +2,17 @@
 
 import { LogOutIcon } from "lucide-react"
 import { useCallback } from "react"
+import { useRouter } from "next/navigation"
+
+import { logout } from "@/_actions/auth/logout"
 
 export const LogoutButton = () => {
-  const onClick = useCallback(async () => {}, [])
+  const router = useRouter()
+
+  const onClick = useCallback(async () => {
+    await logout()
+    router.push("/sign-in")
+  }, [router])
 
   return (
     <button

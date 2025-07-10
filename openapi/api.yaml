@@ -290,6 +290,20 @@ paths:
                 $ref: "#/components/schemas/Error"
       tags:
         - Authentication
+  /auth/profile:
+    get:
+      summary: Perfil do usuário autenticado
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Dados do perfil
+          content:
+            application/json:
+              $ref: "#/components/schemas/User"
+      tags:
+        - Authentication
+
 components:
   schemas:
     Product:

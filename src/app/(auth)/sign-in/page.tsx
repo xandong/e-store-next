@@ -2,11 +2,13 @@
 
 import { useCallback, useState } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { Loader2 } from "lucide-react"
 
+import { login } from "@/_actions/auth/login"
 import { AuthLayout } from "@/components/layout/auth-layout"
 import { Button } from "@/components/_ui/button"
 import { Input } from "@/components/_ui/input"
@@ -19,6 +21,7 @@ import {
   FormLabel,
   FormMessage
 } from "@/components/_ui/form"
+import { useToast } from "@/components/_ui/use-toast"
 
 const signInSchema = z.object({
   email: z
@@ -33,6 +36,8 @@ type SignInSchema = z.infer<typeof signInSchema>
 
 export default function SignIn() {
   const [loading, setLoading] = useState(false)
+  const { toast } = useToast()
+  const router = useRouter()
   const form = useForm<SignInSchema>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
@@ -42,12 +47,28 @@ export default function SignIn() {
   })
   const { handleSubmit } = form
 
-  const onSubmit = useCallback(async (formData: SignInSchema) => {
-    const data = signInSchema.parse(formData)
-    console.log(data)
+  const onSubmit = useCallback(
+    async (formData: SignInSchema) => {
+      setLoading(true)
+      const result = await login(formData)
 
-    setLoading(true)
-  }, [])
+      if (result.success) {
+        toast({
+          title: "Login bem-sucedido!",
+          description: "Você será redirecionado em breve."
+        })
+        router.push("/")
+      } else {
+        toast({
+          title: "Erro ao fazer login",
+          description: result.message,
+          variant: "destructive"
+        })
+        setLoading(false)
+      }
+    },
+    [router, toast]
+  )
 
   return (
     <AuthLayout>
