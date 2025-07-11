@@ -14,11 +14,11 @@ export class UserService {
    * @returns O usuário encontrado ou null se não existir.
    */
   async getUserByIds(id?: string, externalId?: string) {
-    try {
-      if (!id && !externalId) {
-        throw new Error("ID do usuário não fornecido.")
-      }
+    if (!id && !externalId) {
+      throw new Error("ID do usuário não fornecido.")
+    }
 
+    try {
       if (externalId) {
         const user = await this.prisma.user.findUnique({
           where: {
