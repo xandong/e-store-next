@@ -4,6 +4,8 @@ import { AppLayout } from "@/components/layout/app-layout"
 import { Gallery } from "@/components/misc/gallery"
 import { ProductInfo } from "@/components/product/product-info"
 
+export const revalidate = 60 * 60
+
 export async function generateMetadata({
   params
 }: {

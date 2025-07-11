@@ -3,8 +3,47 @@ import { getProductsListAction } from "@/app/_actions/products/getProductsList"
 
 import { AppLayout } from "@/components/layout/app-layout"
 import { Section } from "@/components/misc/section"
+import type { Metadata } from "next"
 
-export const revalidate = 60
+export const revalidate = 5 * 60
+
+export const metadata: Metadata = {
+  title: "eStore - Sua Loja Online",
+  description:
+    "Encontre os melhores peças de roupa e acessórios. Compre online com segurança e rapidez na eStore.",
+  keywords: [
+    "roupa",
+    "e-commerce",
+    "vestuário",
+    "comprar blusa",
+    "loja de roupa"
+  ],
+  openGraph: {
+    title: "eStore - Sua Loja Online",
+    description:
+      "Encontre os melhores jogos para todas as plataformas. Compre online com segurança e rapidez na eStore.",
+    url: "https://www.eStore.com.br",
+    siteName: "eStore",
+    images: [
+      {
+        url: "https://www.eStore.com.br/logo.png",
+        width: 800,
+        height: 600,
+        alt: "Logo eStore"
+      }
+    ],
+    locale: "pt_BR",
+    type: "website"
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "eStore - Sua Loja Online",
+    description:
+      "Encontre os melhores jogos para todas as plataformas. Compre online com segurança e rapidez na eStore.",
+    creator: "@xandongurgel",
+    images: ["https://www.eStore.com.br/logo.png"]
+  }
+}
 
 export default async function Home() {
   const products = await getProductsListAction()

@@ -19,7 +19,7 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "seed": "tsx prisma/seed.ts",
-    "vercel-build": "prisma generate && npm run seed && prisma migrate deploy && next build"
+    "vercel-build": "prisma generate && prisma migrate deploy && npm run seed && next build"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.0.1",
