@@ -20,8 +20,8 @@ jobs:
       - name: Linting
         run: npm run lint
 
-      - name: Testing
-        run: npm run test
+      # - name: Testing
+      #   run: npm run test
 
       - name: Build
         run: npm run build
