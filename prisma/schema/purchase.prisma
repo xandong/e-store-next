@@ -7,7 +7,7 @@ model Purchase {
   total        Int           @default(0)
 
   createdAt DateTime @default(now())
-  userId    Int
+  userId    String
 
   @@map("purchases")
 }

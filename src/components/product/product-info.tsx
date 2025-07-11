@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useCallback, useState } from "react"
 import { Category, Product } from "@/types/prisma/generated"
 
 import { numberToCurrency } from "@/utils/formatters"
@@ -8,6 +8,8 @@ import { Badge } from "../_ui/badge"
 import { AddToCartButton } from "../cart/add-to-cart-button"
 import { BuyNowButton } from "../misc/buy-now-button"
 import { QuantityStepper } from "../misc/quantity-stepper"
+import { useRouter } from "next/navigation"
+import { useCart } from "@/context/cart-context"
 
 export function ProductInfo({
   product,
@@ -16,7 +18,15 @@ export function ProductInfo({
   product: Product
   category: Category | null
 }) {
+  const { addToCart } = useCart()
+  const router = useRouter()
   const [quantity, setQuantity] = useState(1)
+
+  const handleBuyNow = useCallback(() => {
+    addToCart(product.id, quantity, product.title, product.price)
+
+    router.push(`/checkout`)
+  }, [addToCart, product, quantity, router])
 
   return (
     <article className="flex flex-col justify-center space-y-4">
@@ -49,7 +59,7 @@ export function ProductInfo({
       <QuantityStepper defaultValue={1} onChange={setQuantity} />
 
       <div className="flex mt-4 gap-3">
-        <BuyNowButton />
+        <BuyNowButton onClick={handleBuyNow} />
 
         <AddToCartButton
           quantity={quantity}

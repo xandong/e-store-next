@@ -13,7 +13,7 @@ export class UserService {
    * @param id O ID do usuário a ser buscado.
    * @returns O usuário encontrado ou null se não existir.
    */
-  async getUserByIds(id?: number, externalId?: string) {
+  async getUserByIds(id?: string, externalId?: string) {
     try {
       if (!id && !externalId) {
         throw new Error("ID do usuário não fornecido.")

@@ -1,11 +1,17 @@
 import { PrismaClient, PurchaseStatus } from "@/types/prisma/generated"
 import { prisma } from "@/lib/prisma"
-
+import { createClient } from "../supabase/server"
 export class PurchaseService {
   private prisma: PrismaClient
 
   constructor(prismaClient: PrismaClient) {
     this.prisma = prismaClient as PrismaClient
+  }
+
+  async getUserExternalId() {
+    const supabase = await createClient()
+    const { data } = await supabase.auth.getUser()
+    return data.user?.id
   }
 
   async getPurchaseById(id: string) {
@@ -29,11 +35,12 @@ export class PurchaseService {
     }
   }
 
-  async getPurchasesByUserId(userId: number) {
+  async getPurchasesByUserId() {
+    const externalUserId = await this.getUserExternalId()
     try {
       const purchases = await this.prisma.purchase.findMany({
         where: {
-          userId
+          user: { externalId: externalUserId }
         },
         include: {
           productItems: {
@@ -51,7 +58,7 @@ export class PurchaseService {
   }
 
   async createPurchase(
-    userId: number,
+    userId: string,
     items: { productItemId?: string; productId?: string; quantity?: number }[],
     cartId?: string
   ) {
@@ -96,7 +103,7 @@ export class PurchaseService {
         // 4. Criar a compra com os itens conectados e criados
         const purchase = await tx.purchase.create({
           data: {
-            userId,
+            user: { connect: { externalId: await this.getUserExternalId() } },
             status: PurchaseStatus.PENDING,
             productItems: {
               connect: itemsToConnect.map((item) => ({
@@ -135,6 +142,7 @@ export class PurchaseService {
       }
     })
   }
+
   async updatePurchaseStatus(id: string, status: PurchaseStatus) {
     try {
       const updatedPurchase = await this.prisma.purchase.update({

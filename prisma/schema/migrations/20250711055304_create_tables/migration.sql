@@ -4,7 +4,7 @@ CREATE TYPE "PurchaseStatus" AS ENUM ('PENDING', 'PAYED', 'SHIPPED', 'DELIVERED'
 -- CreateTable
 CREATE TABLE "carts" (
     "id" TEXT NOT NULL,
-    "userId" INTEGER NOT NULL,
+    "userId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "carts_pkey" PRIMARY KEY ("id")
@@ -55,14 +55,14 @@ CREATE TABLE "purchases" (
     "status" "PurchaseStatus" NOT NULL DEFAULT 'PENDING',
     "total" INTEGER NOT NULL DEFAULT 0,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "userId" INTEGER NOT NULL,
+    "userId" TEXT NOT NULL,
 
     CONSTRAINT "purchases_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "users" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "externalId" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "name" TEXT,
