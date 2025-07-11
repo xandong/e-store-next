@@ -21,19 +21,26 @@ export const AddToCartButton = ({
   price,
   title
 }: AddToCartButtonProps) => {
-  const { addToCart, setOpen, isLoading } = useCart()
+  const { addToCart, setOpen, actionsLoading } = useCart()
 
   const handleClick = useCallback(() => {
     if (onClick) {
       onClick()
     }
 
-    addToCart(productId, quantity, title, price).then(() => setOpen(true))
+    addToCart(productId, quantity, title, price).then(() => {
+      setOpen(true)
+    })
   }, [addToCart, onClick, price, productId, quantity, setOpen, title])
 
   return (
-    <Button className="flex-1" variant={"outline"} onClick={handleClick}>
-      {isLoading ? (
+    <Button
+      className="flex-1"
+      variant={"outline"}
+      onClick={handleClick}
+      disabled={actionsLoading}
+    >
+      {actionsLoading ? (
         <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
       ) : (
         <>

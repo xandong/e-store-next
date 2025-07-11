@@ -3,6 +3,7 @@
 
 import { Minus, Plus } from "lucide-react"
 import { useState } from "react"
+import { Button } from "../_ui/button"
 
 export function QuantityStepper({
   onChange,
@@ -25,21 +26,23 @@ export function QuantityStepper({
 
   return (
     <div className="flex items-center gap-2 border rounded-md px-3 py-1 w-fit">
-      <button
+      <Button
+        variant={"ghost"}
         className="text-zinc-700 dark:text-zinc-300"
         onClick={() => update(value - 1)}
         disabled={value <= min}
       >
         <Minus size={16} />
-      </button>
-      <span className="w-6 text-center font-medium">{value}</span>
-      <button
+      </Button>
+      <span className="w-6 text-center font-medium select-none">{value}</span>
+      <Button
+        variant={"ghost"}
         className="text-zinc-700 dark:text-zinc-300"
         onClick={() => update(value + 1)}
         disabled={value >= max}
       >
         <Plus size={16} />
-      </button>
+      </Button>
     </div>
   )
 }

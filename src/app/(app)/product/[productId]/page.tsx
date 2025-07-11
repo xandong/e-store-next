@@ -1,8 +1,10 @@
 import { notFound } from "next/navigation"
 import { getProductByIdAction } from "@/app/_actions/products/getProductById"
+
 import { AppLayout } from "@/components/layout/app-layout"
 import { Gallery } from "@/components/misc/gallery"
 import { ProductInfo } from "@/components/product/product-info"
+import { BackButton } from "@/components/misc/back-button"
 
 export const revalidate = 60 * 60
 
@@ -34,15 +36,19 @@ export default async function ProductPage({
 
   return (
     <AppLayout>
-      <section className="max-w-6xl mx-auto p-6 md:p-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-          <div className="relative w-full rounded-xl overflow-hidden shadow-sm">
-            <Gallery images={product.images || []} />
-          </div>
+      <div className="flex flex-col gap-3 items-start p-6 md:p-10">
+        <BackButton />
 
-          <ProductInfo product={product} category={product.category} />
-        </div>
-      </section>
+        <section className="max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+            <div className="relative w-full rounded-xl overflow-hidden shadow-sm">
+              <Gallery images={product.images || []} />
+            </div>
+
+            <ProductInfo product={product} category={product.category} />
+          </div>
+        </section>
+      </div>
     </AppLayout>
   )
 }

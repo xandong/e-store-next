@@ -5,7 +5,7 @@ import { Category, Product } from "@/types/prisma/generated"
 
 import { numberToCurrency } from "@/utils/formatters"
 import { Badge } from "../_ui/badge"
-import { AddToCartButton } from "../misc/add-to-cart-button"
+import { AddToCartButton } from "../cart/add-to-cart-button"
 import { BuyNowButton } from "../misc/buy-now-button"
 import { QuantityStepper } from "../misc/quantity-stepper"
 
@@ -34,9 +34,17 @@ export function ProductInfo({
         {product.description}
       </p>
 
-      <p className="text-2xl font-semibold">
-        {numberToCurrency(product.price)}
-      </p>
+      <div className="flex items-center gap-2">
+        <span className="text-2xl font-semibold">
+          {numberToCurrency(product.price)}
+        </span>
+
+        {quantity !== 1 && (
+          <span className="text-xl font-medium text-zinc-600">
+            {numberToCurrency(product.price * quantity)}
+          </span>
+        )}
+      </div>
 
       <QuantityStepper defaultValue={1} onChange={setQuantity} />
 
