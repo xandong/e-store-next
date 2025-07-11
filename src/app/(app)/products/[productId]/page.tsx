@@ -36,7 +36,7 @@ export default async function ProductPage({
 
   return (
     <AppLayout>
-      <div className="flex flex-col gap-3 items-start pt-2 md:pt-4 p-6 md:p-10">
+      <div className="w-full flex flex-col gap-3 items-start pt-2 md:pt-4 p-6 md:p-10">
         <BackButton />
 
         <section className="max-w-6xl mx-auto">

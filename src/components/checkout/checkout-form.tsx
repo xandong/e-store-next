@@ -50,7 +50,7 @@ export function CheckoutForm() {
   }
 
   return (
-    <div className="p-4 border rounded-lg shadow-md">
+    <div className="p-4 border rounded-lg shadow-md bg-white/80">
       <h2 className="text-2xl font-bold mb-4">Seu Pedido</h2>
       <div className="space-y-2 mb-4">
         {cart.items.map((item) => (

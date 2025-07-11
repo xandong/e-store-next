@@ -10,7 +10,7 @@ export const PurchaseDetails = ({
   purchase: Purchase & { productItems: ProductItemType[] }
 }) => {
   return (
-    <div className="p-6 border rounded-lg shadow-md max-w-2xl mx-auto">
+    <div className="p-6 border rounded-lg shadow-md max-w-2xl mx-auto bg-white/80">
       <h2 className="text-2xl font-bold mb-4 text-center">
         Detalhes da Compra
       </h2>
