@@ -12,7 +12,7 @@ export const CartInfo = () => {
   if (!cart || cart.items.length === 0) {
     return (
       <div>
-        <div className="flex justify-between text-sm text-muted-foreground">
+        <div className="w-full flex justify-center text-sm text-muted-foreground mt-10">
           Nenhum produto adicionado ainda
         </div>
       </div>

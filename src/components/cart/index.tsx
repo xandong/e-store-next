@@ -13,6 +13,7 @@ import {
   SheetTrigger
 } from "../_ui/sheet"
 import { CartInfo } from "./cart-info"
+import Link from "next/link"
 
 export const Cart = () => {
   const { cart, open, setOpen } = useCart()
@@ -41,7 +42,21 @@ export const Cart = () => {
           </SheetDescription>
         </SheetHeader>
 
-        {!isEmpty && <CartInfo />}
+        {isEmpty ? (
+          <div className="flex w-full justify-center items-center mt-10">
+            <span className="text-sm text-muted-foreground text-center">
+              <Link
+                href="/sign-in"
+                className="text-primary underline underline-offset-2"
+              >
+                Entre
+              </Link>{" "}
+              em uma conta para adicionar produtos ao carrinho.
+            </span>
+          </div>
+        ) : (
+          <CartInfo />
+        )}
       </SheetContent>
     </Sheet>
   )

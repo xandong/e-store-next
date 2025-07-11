@@ -68,11 +68,15 @@ export const Navbar = ({ user }: { user: User | null }) => {
                   <MenubarSeparator />
 
                   <MenubarItem>
-                    <Link href="/cart">Carrinho</Link>
+                    <Link href="/cart" className="w-full">
+                      Carrinho
+                    </Link>
                   </MenubarItem>
 
                   <MenubarItem>
-                    <Link href="/purchases">Minhas compras</Link>
+                    <Link href="/purchases" className="w-full">
+                      Minhas compras
+                    </Link>
                   </MenubarItem>
 
                   <MenubarItem asChild disabled>
