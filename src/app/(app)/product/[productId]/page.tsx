@@ -1,10 +1,25 @@
+import { notFound } from "next/navigation"
 import { getProductByIdAction } from "@/app/_actions/products/getProductById"
-import { Badge } from "@/components/_ui/badge"
 import { AppLayout } from "@/components/layout/app-layout"
-import { AddToCartButton } from "@/components/misc/add-to-cart-button"
-import { BuyNowButton } from "@/components/misc/buy-now-button"
 import { Gallery } from "@/components/misc/gallery"
-import { numberToCurrency } from "@/utils/formatters"
+import { ProductInfo } from "@/components/product/product-info"
+
+export async function generateMetadata({
+  params
+}: {
+  params: { productId: string }
+}) {
+  const product = await getProductByIdAction(params.productId)
+  if (!product) return {}
+
+  return {
+    title: `${product.title} - Loja`,
+    description: product.description?.slice(0, 160),
+    openGraph: {
+      images: product.images?.[0] ? [{ url: product.images[0] }] : []
+    }
+  }
+}
 
 export default async function ProductPage({
   params
@@ -13,7 +28,7 @@ export default async function ProductPage({
 }) {
   const product = await getProductByIdAction(params.productId)
 
-  if (!product) return <div>Produto não encontrado</div>
+  if (!product) return notFound()
 
   return (
     <AppLayout>
@@ -23,36 +38,7 @@ export default async function ProductPage({
             <Gallery images={product.images || []} />
           </div>
 
-          <article className="flex flex-col justify-center space-y-4">
-            <h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-100">
-              {product.title}
-            </h1>
-
-            {product.category && (
-              <Badge variant="default" className="mt-2">
-                {product.category.name}
-              </Badge>
-            )}
-
-            <p className="text-lg text-zinc-700 dark:text-zinc-300 leading-relaxed">
-              {product.description}
-            </p>
-
-            <p className="text-2xl font-semibold">
-              {numberToCurrency(product.price)}
-            </p>
-
-            <div className="flex mt-4 gap-3">
-              <BuyNowButton />
-
-              <AddToCartButton
-                quantity={1}
-                productId={product.id}
-                title={product.title}
-                price={product.price}
-              />
-            </div>
-          </article>
+          <ProductInfo product={product} category={product.category} />
         </div>
       </section>
     </AppLayout>

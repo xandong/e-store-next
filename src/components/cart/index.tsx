@@ -35,7 +35,7 @@ export const Cart = () => {
       </SheetTrigger>
       <SheetContent className="p-5 flex flex-col">
         <SheetHeader>
-          <SheetTitle className="text-lg">Meu carrinho</SheetTitle>
+          <SheetTitle className="text-lg">Carrinho</SheetTitle>
           <SheetDescription className="text-sm text-muted-foreground">
             {isEmpty
               ? "Seu carrinho está vazio."
