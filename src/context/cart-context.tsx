@@ -51,7 +51,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
     error,
     isLoading,
     mutate: revalidateCart
-  } = useSWR<CartType>("/api/cart", fetcher)
+  } = useSWR<CartType>("/api/cart", fetcher, {
+    fallback: {
+      id: "temp-" + Date.now()
+    } as CartType
+  })
 
   const [loading, setLoading] = useState(false)
   const [open, setOpen] = useState(false)

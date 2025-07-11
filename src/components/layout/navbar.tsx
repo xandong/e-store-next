@@ -23,7 +23,7 @@ export const Navbar = ({ user }: { user: User | null }) => {
     const firstNameFirstLetter =
       user?.user_metadata.name?.split(" ")[0].split("")[0] || "Usuário"
     const lastNameFirstLetter =
-      user?.user_metadata.name?.split(" ")[1].split("")[0] || ""
+      user?.user_metadata.name?.split(" ")[1]?.split("")[0] || ""
 
     return {
       firstNameFirstLetter,

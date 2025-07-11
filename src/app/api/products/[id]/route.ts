@@ -10,7 +10,7 @@ export async function GET(
   req: Request,
   { params }: { params: { id: string } }
 ) {
-  const data = await getProductByIdAction(Number(params.id))
+  const data = await getProductByIdAction(params.id)
   return NextResponse.json(data)
 }
 
