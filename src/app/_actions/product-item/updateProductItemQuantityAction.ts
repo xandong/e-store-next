@@ -10,9 +10,13 @@ const updateProductItemQuantitySchema = z.object({
 })
 
 export async function updateProductItemQuantityAction(
-  data: z.infer<typeof updateProductItemQuantitySchema>
+  productItemId: string,
+  quantity: number
 ) {
-  const validatedData = updateProductItemQuantitySchema.parse(data)
+  const validatedData = updateProductItemQuantitySchema.parse({
+    productItemId,
+    quantity
+  })
   const updatedItem = await productItemService.updateProductItemQuantity(
     validatedData.productItemId,
     validatedData.quantity

@@ -8,11 +8,19 @@ export class CartService {
     this.prisma = prismaClient as PrismaClient
   }
 
-  async getCartByUserId(userId: number) {
+  async getCartByUserId(supabaseId: string) {
     try {
+      const user = await this.prisma.user.findUnique({
+        where: { externalId: supabaseId }
+      })
+
+      if (!user) {
+        throw new Error("Usuário não encontrado.")
+      }
+
       let cart = await this.prisma.cart.findUnique({
         where: {
-          userId
+          userId: user.id
         },
         include: {
           items: {
@@ -26,7 +34,7 @@ export class CartService {
       if (!cart) {
         cart = await this.prisma.cart.create({
           data: {
-            userId
+            userId: user.id
           },
           include: {
             items: {
@@ -48,7 +56,11 @@ export class CartService {
     }
   }
 
-  async addProductToCart(userId: number, productId: string, quantity: number) {
+  async addProductToCart(
+    supabaseId: string,
+    productId: string,
+    quantity: number
+  ) {
     try {
       const product = await this.prisma.product.findUnique({
         where: { id: productId }
@@ -58,13 +70,21 @@ export class CartService {
         throw new Error("Produto não encontrado.")
       }
 
+      const user = await this.prisma.user.findUnique({
+        where: { externalId: supabaseId }
+      })
+
+      if (!user) {
+        throw new Error("Usuário não encontrado.")
+      }
+
       let cart = await this.prisma.cart.findUnique({
-        where: { userId }
+        where: { userId: user.id }
       })
 
       if (!cart) {
         cart = await this.prisma.cart.create({
-          data: { userId }
+          data: { userId: user.id }
         })
       }
 

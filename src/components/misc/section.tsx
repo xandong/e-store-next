@@ -1,8 +1,6 @@
 "use client"
 
-import useSWR from "swr"
-
-import { ProductCard } from "@/app/(app)/(home)/product-card"
+import { ProductCard } from "@/components/product/product-card"
 
 import {
   Carousel,
@@ -11,7 +9,7 @@ import {
   CarouselNext,
   CarouselPrevious
 } from "../_ui/carousel"
-import { Category, Product } from "@/types/api/generated"
+import { Category, Product } from "@/types/prisma/generated"
 // import { getProductsListAction } from "@/app/_actions/products/getProductsList"
 
 interface SectionProps {
@@ -20,13 +18,6 @@ interface SectionProps {
 }
 
 export const Section = ({ category, products }: SectionProps) => {
-  // const { data, error, isLoading, isValidating, mutate } = useSWR(
-  //   "pato",
-  //   getProductsListAction,
-  //   {
-  //     refreshInterval: 10000
-  //   }
-  // )
   return (
     <section className="w-full">
       <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold mb-6 text-start">
@@ -41,7 +32,7 @@ export const Section = ({ category, products }: SectionProps) => {
                 key={product.id!}
                 className="basis-1/2 xs:basis-1/2 sm:basis-1/2 md:basis-1/3 lg:basis-1/4"
               >
-                <ProductCard product={product} />
+                <ProductCard product={product} category={category} />
               </CarouselItem>
             ))}
           </CarouselContent>

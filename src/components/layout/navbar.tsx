@@ -5,16 +5,7 @@
 import { useMemo } from "react"
 import Link from "next/link"
 import { User } from "@supabase/supabase-js"
-import { ShoppingCartIcon } from "lucide-react"
 
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger
-} from "../_ui/sheet"
 import {
   Menubar,
   MenubarContent,
@@ -23,8 +14,9 @@ import {
   MenubarSeparator,
   MenubarTrigger
 } from "../_ui/menubar"
-import { LogoutButton } from "./logout-button"
 import { Button } from "../_ui/button"
+import { Cart } from "../cart"
+import { LogoutButton } from "./logout-button"
 
 export const Navbar = ({ user }: { user: User | null }) => {
   const { firstNameFirstLetter, lastNameFirstLetter } = useMemo(() => {
@@ -48,19 +40,9 @@ export const Navbar = ({ user }: { user: User | null }) => {
   return (
     <nav>
       <ul className="flex items-center gap-2">
-        <Sheet>
-          <SheetTrigger>
-            <ShoppingCartIcon className="text-zinc-700" />
-          </SheetTrigger>
-          <SheetContent>
-            <SheetHeader>
-              <SheetTitle>Meu carrinho</SheetTitle>
-              <SheetDescription>
-                Nenhum produto adicionado ainda
-              </SheetDescription>
-            </SheetHeader>
-          </SheetContent>
-        </Sheet>
+        <div className="flex items-center pr-2">
+          <Cart />
+        </div>
 
         {user ? (
           <>
@@ -84,12 +66,13 @@ export const Navbar = ({ user }: { user: User | null }) => {
                   </div>
 
                   <MenubarSeparator />
-                  <MenubarItem>
-                    <Link href="/create">Carrinho</Link>
-                  </MenubarItem>
 
                   <MenubarItem>
                     <Link href="/me">Favoritos</Link>
+                  </MenubarItem>
+
+                  <MenubarItem>
+                    <Link href="/create">Minhas compras</Link>
                   </MenubarItem>
 
                   <MenubarItem asChild disabled>

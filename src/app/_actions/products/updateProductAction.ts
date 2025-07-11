@@ -23,7 +23,7 @@ export async function updateProductAction(
   const product = await productService.updateProduct(id, rest)
 
   revalidatePath("/products")
-  revalidatePath(`/products/${product.slug}`)
+  revalidatePath(`/products/${product.id}`)
 
   return product
 }

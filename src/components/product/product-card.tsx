@@ -1,13 +1,15 @@
 import Link from "next/link"
 import Image from "next/image"
-import { Product } from "@/types/api/generated"
+import { Category, Product } from "@/types/prisma/generated"
 import { Badge } from "@/components/_ui/badge"
+import { numberToCurrency } from "@/utils/formatters"
 
 interface ProductCardProps {
   product: Product
+  category?: Category
 }
 
-export const ProductCard = ({ product }: ProductCardProps) => {
+export const ProductCard = ({ product, category }: ProductCardProps) => {
   return (
     <Link
       href={`/product/${product.id}`}
@@ -19,21 +21,20 @@ export const ProductCard = ({ product }: ProductCardProps) => {
         alt={product.title || ""}
         width={192}
         height={192}
-        className="w-full h-auto object-cover rounded-xl"
+        className="w-full h-auto object-cover rounded-xl shadow"
       />
+
       <div className="py-4">
-        <h2 className="text-sm md:text-lg font-semibold text-zinc-800 dark:text-zinc-100">
-          {product.title}
-        </h2>
+        <h2 className="text-sm md:text-lg font-semibold">{product.title}</h2>
         <p className="text-zinc-600 dark:text-zinc-400 text-sm mt-1 truncate">
           {product.description}
         </p>
         <p className="text-zinc-900 dark:text-zinc-200 font-bold mt-2">
-          ${product.price?.toFixed(2)}
+          {numberToCurrency(product.price)}
         </p>
-        {product.category && (
+        {category && (
           <Badge variant="default" className="mt-2">
-            {product.category.name}
+            {category.name}
           </Badge>
         )}
       </div>

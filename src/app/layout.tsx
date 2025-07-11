@@ -4,6 +4,7 @@ import { Livvic } from "next/font/google"
 import "@/styles/global.css"
 import { ThemeProvider } from "@/components/layout/theme-provider"
 import { Toaster } from "@/components/_ui/sonner"
+import { CartProvider } from "@/context/cart-context"
 
 export const metadata: Metadata = {
   title: "E-Games",
@@ -29,7 +30,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <CartProvider>{children}</CartProvider>
           <Toaster duration={3000} position="top-right" />
         </ThemeProvider>
       </body>

@@ -1,14 +1,19 @@
 import { getProductByIdAction } from "@/app/_actions/products/getProductById"
 import { Badge } from "@/components/_ui/badge"
 import { AppLayout } from "@/components/layout/app-layout"
+import { AddToCartButton } from "@/components/misc/add-to-cart-button"
+import { BuyNowButton } from "@/components/misc/buy-now-button"
 import { Gallery } from "@/components/misc/gallery"
+import { numberToCurrency } from "@/utils/formatters"
 
 export default async function ProductPage({
   params
 }: {
-  params: { id: number }
+  params: { productId: string }
 }) {
-  const product = await getProductByIdAction(params.id)
+  const product = await getProductByIdAction(params.productId)
+
+  if (!product) return <div>Produto não encontrado</div>
 
   return (
     <AppLayout>
@@ -34,15 +39,14 @@ export default async function ProductPage({
             </p>
 
             <p className="text-2xl font-semibold">
-              ${product.price?.toFixed(2)}
+              {numberToCurrency(product.price)}
             </p>
 
-            {/* Botões futuros ou ações */}
-            {/* <div className="mt-4">
-              <button className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded">
-                Adicionar ao carrinho
-              </button>
-            </div> */}
+            <div className="flex mt-4 gap-3">
+              <BuyNowButton />
+
+              <AddToCartButton productId={product.id} quantity={1} />
+            </div>
           </article>
         </div>
       </section>

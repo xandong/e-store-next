@@ -3,24 +3,34 @@
 import { z } from "zod"
 import { cartService } from "@/services/cart-service"
 import { revalidatePath } from "next/cache"
+import { createClient } from "@/services/supabase/server"
 
 const addProductToCartSchema = z.object({
-  userId: z.number(),
   productId: z.string(),
   quantity: z.number().min(1)
 })
 
 export async function addProductToCartAction(
-  data: z.infer<typeof addProductToCartSchema>
+  productId: string,
+  quantity: number
 ) {
-  const validatedData = addProductToCartSchema.parse(data)
+  const validatedData = addProductToCartSchema.parse({ productId, quantity })
+  const client = await createClient()
+  const {
+    data: { user }
+  } = await client.auth.getUser()
+
+  if (!user) {
+    throw new Error("User not authenticated")
+  }
+
   const cartItem = await cartService.addProductToCart(
-    validatedData.userId,
+    user.id,
     validatedData.productId,
     validatedData.quantity
   )
 
-  revalidatePath("/cart") // Assuming you have a /cart page
+  revalidatePath("/cart")
 
   return cartItem
 }

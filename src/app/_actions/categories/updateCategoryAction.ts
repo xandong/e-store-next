@@ -2,7 +2,6 @@
 
 import { z } from "zod"
 import { categoriesService } from "@/services/categories-service"
-import { revalidatePath } from "next/cache"
 import { Category } from "@/types/prisma/generated"
 
 const updateCategorySchema = z.object({
@@ -18,9 +17,6 @@ export async function updateCategoryAction(
   const validatedData = updateCategorySchema.parse(data)
   const { id, ...rest } = validatedData
   const category = await categoriesService.updateCategory(id, rest)
-
-  revalidatePath("/categories")
-  revalidatePath(`/categories/${category.slug}`)
 
   return category
 }

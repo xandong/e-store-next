@@ -1,5 +1,12 @@
-import { categoriesApi } from "@/services/api"
+"use server"
 
-export const getCategoriesListAction = async () => {
-  return (await categoriesApi.getCategories()).data
+import { z } from "zod"
+import { categoriesService } from "@/services/categories-service"
+
+const getCategoriesListSchema = z.void()
+
+export async function getCategoriesListAction() {
+  getCategoriesListSchema.parse(undefined)
+  const categories = await categoriesService.getCategories()
+  return categories
 }

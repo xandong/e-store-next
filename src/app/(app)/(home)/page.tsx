@@ -18,7 +18,7 @@ export default async function Home() {
             key={category.id}
             category={category}
             products={products.filter(
-              (product) => product.category.slug === category.slug
+              (product) => product.categoryId === category.id
             )}
           />
         ))}
