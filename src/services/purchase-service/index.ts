@@ -14,11 +14,12 @@ export class PurchaseService {
     return data.user?.id
   }
 
-  async getPurchaseById(id: string) {
+  async getPurchaseById(id: string, userId: string) {
     try {
       const purchase = await this.prisma.purchase.findUnique({
         where: {
-          id
+          id,
+          userId
         },
         include: {
           productItems: {
@@ -35,12 +36,11 @@ export class PurchaseService {
     }
   }
 
-  async getPurchasesByUserId() {
-    const externalUserId = await this.getUserExternalId()
+  async getPurchasesByUserId(userId: string) {
     try {
       const purchases = await this.prisma.purchase.findMany({
         where: {
-          user: { externalId: externalUserId }
+          userId
         },
         include: {
           productItems: {
@@ -64,20 +64,18 @@ export class PurchaseService {
   ) {
     return this.prisma.$transaction(async (tx) => {
       try {
-        // 1. Separar os itens a conectar (já existem) e os a criar
         const itemsToConnect = items.filter((item) => item.productItemId)
         const itemsToCreate = items.filter(
           (item) => !item.productItemId && item.productId && item.quantity
         )
 
-        // 2. Validação básica
         for (const item of itemsToCreate) {
           if (!item.productId || !item.quantity) {
             throw new Error("Itens a criar devem conter productId e quantity.")
           }
         }
 
-        // 3. Criar novos ProductItems com base nos produtos
+        // Criar novos ProductItems com base nos produtos
         const createdProductItems = await Promise.all(
           itemsToCreate.map(async (item) => {
             const product = await tx.product.findUnique({
@@ -100,11 +98,37 @@ export class PurchaseService {
           })
         )
 
-        // 4. Criar a compra com os itens conectados e criados
+        let itemsToConnectTotal = 0
+
+        if (itemsToConnect.length > 0) {
+          await Promise.all(
+            itemsToConnect.map(async (item) => {
+              const product = await tx.product.findUnique({
+                where: { id: item.productId! }
+              })
+
+              if (!product) {
+                itemsToConnect.splice(itemsToConnect.indexOf(item), 1)
+                return
+              }
+
+              itemsToConnectTotal += product.price * (item.quantity || 1)
+            })
+          )
+        }
+
+        const total =
+          createdProductItems.reduce(
+            (acc, item) => acc + item.price * item.quantity,
+            0
+          ) + itemsToConnectTotal
+
+        // Criar a compra com os itens conectados e criados
         const purchase = await tx.purchase.create({
           data: {
-            user: { connect: { externalId: await this.getUserExternalId() } },
+            userId,
             status: PurchaseStatus.PENDING,
+            total,
             productItems: {
               connect: itemsToConnect.map((item) => ({
                 id: item.productItemId!
@@ -121,7 +145,7 @@ export class PurchaseService {
           }
         })
 
-        // 5. Se veio de um carrinho, remover os itens conectados dele
+        // Se veio de um carrinho, remover os itens conectados dele
         if (cartId && itemsToConnect.length > 0) {
           await tx.cart.update({
             where: { id: cartId },

@@ -12,7 +12,7 @@ interface ProductCardProps {
 export const ProductCard = ({ product, category }: ProductCardProps) => {
   return (
     <Link
-      href={`/product/${product.id}`}
+      href={`/products/${product.id}`}
       key={product.id}
       className="max-w-xs w-full bg-white rounded-2xl shadow-md hover:shadow-lg transition-shadow overflow-hidden aspect-square"
     >

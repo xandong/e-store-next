@@ -4,7 +4,7 @@ import { purchaseService } from "@/services/purchase-service"
 import { userService } from "@/services/users-service"
 import { createClient } from "@/services/supabase/server"
 
-export async function getPurchaseByIdAction(purchaseId: string) {
+export async function getPurchasesListAction() {
   const supabase = await createClient()
   const {
     data: { user: supabaseUser }
@@ -20,11 +20,7 @@ export async function getPurchaseByIdAction(purchaseId: string) {
     throw new Error("User not found in database")
   }
 
-  const purchase = await purchaseService.getPurchaseById(purchaseId, user.id)
+  const purchases = await purchaseService.getPurchasesByUserId(user.id)
 
-  if (!purchase) {
-    throw new Error("Purchase not found")
-  }
-
-  return purchase
+  return purchases
 }

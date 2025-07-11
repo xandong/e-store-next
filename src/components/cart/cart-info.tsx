@@ -21,7 +21,7 @@ export const CartInfo = () => {
 
   return (
     <div className="flex-1 w-full flex flex-col gap-4 items-center">
-      <div className="max-w-3xl w-full flex-1 overflow-y-auto mt-4 flex flex-col gap-4">
+      <div className="max-w-3xl w-full flex-1 overflow-y-auto mt-4 flex flex-col gap-4 max-h-[calc(100vh-18rem)]">
         {cart.items
           .sort(
             (a, b) =>
