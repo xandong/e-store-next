@@ -68,11 +68,11 @@ export const Navbar = ({ user }: { user: User | null }) => {
                   <MenubarSeparator />
 
                   <MenubarItem>
-                    <Link href="/me">Favoritos</Link>
+                    <Link href="/cart">Carrinho</Link>
                   </MenubarItem>
 
                   <MenubarItem>
-                    <Link href="/create">Minhas compras</Link>
+                    <Link href="/purchases">Minhas compras</Link>
                   </MenubarItem>
 
                   <MenubarItem asChild disabled>

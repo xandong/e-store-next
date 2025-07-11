@@ -3,7 +3,6 @@
 import { ShoppingCartIcon } from "lucide-react"
 
 import { useCart } from "@/context/cart-context"
-import { numberToCurrency } from "@/utils/formatters"
 
 import {
   Sheet,
@@ -13,11 +12,10 @@ import {
   SheetTitle,
   SheetTrigger
 } from "../_ui/sheet"
-import { Button } from "../_ui/button"
-import { CartCardItem } from "./cartCardItem"
+import { CartInfo } from "./cart-info"
 
 export const Cart = () => {
-  const { cart, total, open, setOpen } = useCart()
+  const { cart, open, setOpen } = useCart()
 
   const isEmpty = !cart || cart.items.length === 0
 
@@ -43,31 +41,7 @@ export const Cart = () => {
           </SheetDescription>
         </SheetHeader>
 
-        {!isEmpty && (
-          <>
-            <div className="flex-1 overflow-y-auto mt-4 flex flex-col gap-4">
-              {cart.items
-                .sort(
-                  (a, b) =>
-                    new Date(b.createdAt).getTime() -
-                    new Date(a.createdAt).getTime()
-                )
-                .map((item) => (
-                  <CartCardItem key={item.product.id} item={item} />
-                ))}
-            </div>
-
-            <div className="border-t pt-4 mt-4 space-y-2">
-              <div className="flex justify-between text-sm text-muted-foreground">
-                <span>Total</span>
-                <span className="text-base font-semibold text-foreground">
-                  {numberToCurrency(total)}
-                </span>
-              </div>
-              <Button className="w-full mt-2">Finalizar compra</Button>
-            </div>
-          </>
-        )}
+        {!isEmpty && <CartInfo />}
       </SheetContent>
     </Sheet>
   )
