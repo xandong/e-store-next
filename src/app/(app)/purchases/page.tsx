@@ -1,7 +1,13 @@
 import { AppLayout } from "@/components/layout/app-layout"
 import { getPurchasesListAction } from "@/app/_actions/purchase/getPurchasesListAction"
 import { PurchaseCardItem } from "@/components/purchase/purchase-card-item"
+import type { Metadata } from "next"
 import { BackButton } from "@/components/misc/back-button"
+
+export const metadata: Metadata = {
+  title: "Minhas Compras - eStore",
+  description: "Veja o histórico de suas compras na eStore."
+}
 
 export default async function PurchasesPage() {
   const purchases = await getPurchasesListAction()

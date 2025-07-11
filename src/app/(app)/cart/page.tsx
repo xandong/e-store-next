@@ -1,6 +1,13 @@
 import { CartInfo } from "@/components/cart/cart-info"
 import { AppLayout } from "@/components/layout/app-layout"
 import { BackButton } from "@/components/misc/back-button"
+import type { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "Carrinho - eStore",
+  description:
+    "Revise e gerencie os itens no seu carrinho de compras na eStore."
+}
 
 export default function CartPage() {
   return (

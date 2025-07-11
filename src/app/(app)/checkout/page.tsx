@@ -1,5 +1,11 @@
 import { AppLayout } from "@/components/layout/app-layout"
 import { CheckoutForm } from "@/components/checkout/checkout-form"
+import type { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "Checkout - eStore",
+  description: "Finalize sua compra com segurança na eStore."
+}
 
 export default function CheckoutPage() {
   return (
