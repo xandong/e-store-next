@@ -21,7 +21,12 @@ interface CartContextType {
   isLoading: boolean
   actionsLoading: boolean
   error: unknown
-  addToCart: (productId: string, quantity: number) => Promise<void>
+  addToCart: (
+    productId: string,
+    quantity: number,
+    title: string,
+    price: number
+  ) => Promise<void>
   updateCartItemQuantity: (
     productItemId: string,
     quantity: number
@@ -54,14 +59,16 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const total =
     cart?.items.reduce((acc, item) => acc + item.price * item.quantity, 0) || 0
 
-  const addToCart = async (productId: string, quantity: number) => {
+  const addToCart = async (
+    productId: string,
+    quantity: number,
+    title: string,
+    price: number
+  ) => {
     if (!cart) return
 
     setLoading(true)
     const prevCart = { ...cart }
-
-    const res = await fetch(`/api/products/${productId}`)
-    const product = (await res.json()) as Product
 
     const optimisticCart: CartType = {
       ...cart,
@@ -70,10 +77,20 @@ export function CartProvider({ children }: { children: ReactNode }) {
         {
           cartId: cart.id,
           id: "temp-" + Date.now(),
-          price: product.price,
+          price,
           quantity,
           productId,
-          product: product,
+          product: {
+            title,
+            price,
+            id: "temp-" + Date.now(),
+            slug: "",
+            description: null,
+            images: [],
+            externalId: null,
+            categoryId: null,
+            createdAt: new Date()
+          },
           createdAt: new Date(),
           purchaseId: null
         }

@@ -45,7 +45,12 @@ export default async function ProductPage({
             <div className="flex mt-4 gap-3">
               <BuyNowButton />
 
-              <AddToCartButton productId={product.id} quantity={1} />
+              <AddToCartButton
+                quantity={1}
+                productId={product.id}
+                title={product.title}
+                price={product.price}
+              />
             </div>
           </article>
         </div>

@@ -10,12 +10,16 @@ interface AddToCartButtonProps {
   onClick?: () => void
   productId: string
   quantity: number
+  title: string
+  price: number
 }
 
 export const AddToCartButton = ({
   onClick,
   productId,
-  quantity
+  quantity,
+  price,
+  title
 }: AddToCartButtonProps) => {
   const { addToCart, setOpen, isLoading } = useCart()
 
@@ -24,8 +28,8 @@ export const AddToCartButton = ({
       onClick()
     }
 
-    addToCart(productId, quantity).then(() => setOpen(true))
-  }, [addToCart, onClick, productId, quantity, setOpen])
+    addToCart(productId, quantity, title, price).then(() => setOpen(true))
+  }, [addToCart, onClick, price, productId, quantity, setOpen, title])
 
   return (
     <Button className="flex-1" variant={"outline"} onClick={handleClick}>
