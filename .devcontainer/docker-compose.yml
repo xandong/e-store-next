@@ -6,21 +6,21 @@ volumes:
   postgres-data: null
 
 services:
-  next:
-    build:
-      context: ..
-      dockerfile: .devcontainer/Dockerfile
-    env_file:
-      - .env
-    volumes:
-      - ..:/workspace/app:cached
-      - /workspace/app/node_modules
-    command: tail -f /dev/null
-    ports:
-      - "3000:3000"
-    networks:
-      - e_store-app
-    restart: unless-stopped
+  # app:
+  #   build:
+  #     context: ..
+  #     dockerfile: .devcontainer/Dockerfile
+  #   env_file:
+  #     - .env
+  #   volumes:
+  #     - ..:/workspace/app:cached
+  #     - /workspace/app/node_modules
+  #   command: tail -f /dev/null
+  #   ports:
+  #     - "3000:3000"
+  #   networks:
+  #     - e_store-app
+  #   restart: unless-stopped
 
   db:
     image: postgres:14.18
@@ -29,10 +29,14 @@ services:
       - e_store-app
     volumes:
       - postgres-data:/var/lib/postgresql/data
+    env_file:
+      - ../.env
     environment:
       - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
       - POSTGRES_USER=${DATABASE_USER}
       - POSTGRES_DB=${DATABASE_NAME}
+    ports:
+      - "5432:5432"
     healthcheck:
       test: pg_isready -U "${DATABASE_USER}" -d "${DATABASE_NAME}"
       interval: 5s
@@ -41,6 +45,8 @@ services:
 
   adminer:
     image: adminer
+    env_file:
+      - ../.env
     ports:
       - "${ADMINER_FORWARD_PORT:-8088}:8080"
     networks:

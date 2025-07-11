@@ -1,0 +1,17 @@
+model Product {
+  id          String   @id @default(uuid())
+  title       String
+  slug        String
+  price       Int
+  description String?
+  images      String[]
+
+  externalId String?
+  categoryId Int?
+  category   Category? @relation(fields: [categoryId], references: [id])
+
+  createdAt   DateTime      @default(now())
+  ProductItem ProductItem[]
+
+  @@map("products")
+}

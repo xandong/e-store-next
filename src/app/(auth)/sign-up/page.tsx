@@ -20,28 +20,27 @@ import { Button } from "@/components/_ui/button"
 import { Input } from "@/components/_ui/input"
 import { z } from "zod"
 import { PasswordInput } from "@/components/_ui/input-password"
+import { signupAction } from "@/app/_actions/auth/register"
+import { toast } from "sonner"
 
 const signUpSchema = z
   .object({
-    firstName: z
-      .string({ message: "First name is required" })
-      .min(1, "First name is required"),
-    lastName: z
-      .string({ message: "Last name is required" })
-      .min(1, "Last name is required"),
+    name: z
+      .string({ message: "O nome é obrigatório" })
+      .min(1, "O nome é obrigatório"),
     email: z
-      .string({ message: "Invalid email address" })
-      .email("Invalid email address"),
+      .string({ message: "Insira um email válido" })
+      .email("Insira um email válido"),
     password: z
-      .string({ message: "Password is required" })
-      .min(8, "Password must be at least 8 characters"),
-    confirmPassword: z.string().min(8, "Password must be at least 8 characters")
+      .string({ message: "A senha é obrigatória" })
+      .min(8, "O limite mínimo de caracteres é 8"),
+    confirmPassword: z.string().min(8, "O limite mínimo de caracteres é 8")
   })
   .superRefine(({ confirmPassword, password }, ctx) => {
     if (confirmPassword !== password) {
       ctx.addIssue({
         code: "custom",
-        message: "The passwords did not match",
+        message: "As senhas não coincidem",
         path: ["confirmPassword"]
       })
     }
@@ -56,8 +55,7 @@ export default function SignUp() {
   const form = useForm<SignUpSchema>({
     resolver: zodResolver(signUpSchema),
     defaultValues: {
-      firstName: "",
-      lastName: "",
+      name: "",
       email: "",
       password: "",
       confirmPassword: ""
@@ -67,8 +65,22 @@ export default function SignUp() {
 
   const onSubmit = useCallback(async (formData: SignUpSchema) => {
     const data = signUpSchema.parse(formData)
-    console.log(data)
+
     setLoading(true)
+    const result = await signupAction(data)
+
+    setLoading(false)
+
+    if (result?.error) {
+      if (result.error.match(/already registered/i)) {
+        toast.error("Email já cadastrado")
+        return
+      }
+      toast.error(result.error)
+      return
+    }
+
+    toast.success("Contra criada com sucesso! Seja bem vindo!")
   }, [])
 
   return (
@@ -90,7 +102,7 @@ export default function SignUp() {
         </div>
       ) : (
         <>
-          <h1 className="font-bold text-2xl mb-8">Register</h1>
+          <h1 className="font-bold text-2xl mb-8">Crie uma Conta</h1>
 
           <Form {...form}>
             <form
@@ -98,26 +110,11 @@ export default function SignUp() {
               onSubmit={handleSubmit(onSubmit)}
             >
               <FormField
-                name="firstName"
+                name="name"
                 control={form.control}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>First name</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                name="lastName"
-                control={form.control}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Last name</FormLabel>
+                    <FormLabel>Nome</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -147,7 +144,7 @@ export default function SignUp() {
                 control={form.control}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel>Senha</FormLabel>
                     <FormControl>
                       <PasswordInput {...field} autoComplete="new-password" />
                     </FormControl>
@@ -162,7 +159,7 @@ export default function SignUp() {
                 control={form.control}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Confirm password</FormLabel>
+                    <FormLabel>Confirme a senha</FormLabel>
                     <FormControl>
                       <PasswordInput {...field} autoComplete="new-password" />
                     </FormControl>
@@ -178,9 +175,9 @@ export default function SignUp() {
           </Form>
 
           <div className="pt-6 text-neutral-400 flex justify-center gap-1">
-            Already have an account?
+            Já possui uma conta?
             <Link href={"/sign-in"} className="font-semibold">
-              Sign in
+              Entrar
             </Link>
           </div>
         </>

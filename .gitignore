@@ -7,9 +7,12 @@
 .yarn/install-state.gz
 /storybook-static
 /src/types/generated
+/src/types/prisma
+/src/types/api
 # testing
 /coverage
-
+.env
+.env.local
 # next.js
 /.next/
 /out/
@@ -37,3 +40,5 @@ yarn-error.log*
 next-env.d.ts
 
 *storybook.log
+
+/src/generated/prisma

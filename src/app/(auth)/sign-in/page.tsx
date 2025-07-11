@@ -2,11 +2,13 @@
 
 import { useCallback, useState } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { Loader2 } from "lucide-react"
 
+import { loginAction } from "@/app/_actions/auth/login"
 import { AuthLayout } from "@/components/layout/auth-layout"
 import { Button } from "@/components/_ui/button"
 import { Input } from "@/components/_ui/input"
@@ -20,20 +22,22 @@ import {
   FormLabel,
   FormMessage
 } from "@/components/_ui/form"
+import { toast } from "sonner"
 
 const signInSchema = z.object({
   email: z
-    .string({ message: "Invalid email address" })
-    .email("Invalid email address"),
+    .string({ message: "Insira um email válido" })
+    .email("Insira um email válido"),
   password: z
-    .string({ message: "Password is required" })
-    .min(8, "Password must be at least 8 characters")
+    .string({ message: "A senha é obrigatória" })
+    .min(8, "O limite mínimo de caracteres é 8")
 })
 
 type SignInSchema = z.infer<typeof signInSchema>
 
 export default function SignIn() {
   const [loading, setLoading] = useState(false)
+  const router = useRouter()
   const form = useForm<SignInSchema>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
@@ -43,16 +47,29 @@ export default function SignIn() {
   })
   const { handleSubmit } = form
 
-  const onSubmit = useCallback(async (formData: SignInSchema) => {
-    const data = signInSchema.parse(formData)
-    console.log(data)
+  const onSubmit = useCallback(
+    async (formData: SignInSchema) => {
+      const data = signInSchema.parse(formData)
 
-    setLoading(true)
-  }, [])
+      setLoading(true)
+      const result = await loginAction(data)
+
+      setLoading(false)
+
+      if (result?.error) {
+        toast.error("Erro ao fazer login")
+        return
+      }
+
+      toast.success("Login bem-sucedido!")
+      router.push("/")
+    },
+    [router]
+  )
 
   return (
     <AuthLayout>
-      <h1 className="font-bold text-2xl mb-8">Login</h1>
+      <h1 className="font-extrabold text-2xl mb-8">Login</h1>
 
       <Form {...form}>
         <form
@@ -74,21 +91,25 @@ export default function SignIn() {
             )}
           />
 
-          <div className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-1.5 mb-10">
             <FormField
               name="password"
               control={form.control}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel>Senha</FormLabel>
                   <FormControl>
                     <PasswordInput {...field} autoComplete="password" />
                   </FormControl>
 
                   <FormMessage />
                   <FormDescription>
-                    <Link href={"/reset-password"} className="text-neutral-500">
-                      Forgot password?
+                    <Link
+                      href={"/reset-password"}
+                      aria-disabled
+                      className="text-neutral-500"
+                    >
+                      Esqueceu a senha?
                     </Link>
                   </FormDescription>
                 </FormItem>
@@ -103,9 +124,9 @@ export default function SignIn() {
       </Form>
 
       <div className="pt-6 text-neutral-400 flex justify-center gap-1">
-        Don't have an account?
+        Não tem uma conta?
         <Link href={"/sign-up"} className="font-semibold">
-          Sign up
+          Criar conta
         </Link>
       </div>
     </AuthLayout>

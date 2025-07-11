@@ -1,130 +1,446 @@
-openapi: 3.0.0
+openapi: 3.0.3
 info:
-  title: EscuelaJS Fake Store API
-  version: "1.0"
+  title: Platzi Fake Store API
+  description: A comprehensive REST API for e-commerce or shopping website prototypes, supporting CRUD operations, JWT authentication, pagination, and filtering. Also provides GraphQL support for flexible data queries.
+  version: 1.0.0
+  contact:
+    name: Platzi
+    url: https://platzi.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
 servers:
   - url: https://api.escuelajs.co/api/v1
+    description: Main API server
+  - url: https://api.escuelajs.co/graphql
+    description: GraphQL API server
 paths:
   /products:
     get:
-      summary: Lista produtos com paginação
+      summary: List all products
+      description: Retrieve a paginated list of products with optional filtering by price, title, or category.
+      operationId: getProducts
       parameters:
-        - name: offset
+        - name: limit
           in: query
+          description: Number of products to return
           required: false
           schema:
             type: integer
-        - name: limit
+            default: 10
+        - name: offset
           in: query
+          description: Number of products to skip for pagination
+          required: false
+          schema:
+            type: integer
+            default: 0
+        - name: price
+          in: query
+          description: Filter products by price
+          required: false
+          schema:
+            type: number
+        - name: title
+          in: query
+          description: Filter products by title
+          required: false
+          schema:
+            type: string
+        - name: categoryId
+          in: query
+          description: Filter products by category ID
           required: false
           schema:
             type: integer
       responses:
         "200":
-          description: Lista de produtos
+          description: Successful response with a list of products
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: "#/components/schemas/Product"
-    post:
-      summary: Cria um produto
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/ProductCreate"
-      responses:
-        "201":
-          description: Produto criado
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Product"
+      tags:
+        - Products
   /products/{id}:
-    parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: integer
     get:
-      summary: Detalhes de um produto
+      summary: Get a single product by ID
+      description: Retrieve details of a specific product by its ID.
+      operationId: getProductById
+      parameters:
+        - name: id
+          in: path
+          description: ID of the product
+          required: true
+          schema:
+            type: integer
       responses:
         "200":
-          description: Produto
+          description: Successful response with product details
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Product"
+        "404":
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+      tags:
+        - Products
     put:
-      summary: Atualiza um produto
+      summary: Update a product
+      description: Update specific attributes of a product by its ID. Requires JWT authentication.
+      operationId: updateProduct
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: ID of the product to update
+          required: true
+          schema:
+            type: integer
       requestBody:
+        description: Product attributes to update
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ProductCreate"
+              $ref: "#/components/schemas/ProductUpdate"
       responses:
         "200":
-          description: Produto atualizado
+          description: Product updated successfully
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Product"
-    delete:
-      summary: Remove um produto
-      responses:
-        "200":
-          description: Sucesso
+        "401":
+          description: Unauthorized
           content:
             application/json:
               schema:
-                type: boolean
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+      tags:
+        - Products
+    delete:
+      summary: Delete a product
+      description: Delete a product by its ID. Requires JWT authentication.
+      operationId: deleteProduct
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: ID of the product to delete
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Product deleted successfully
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+      tags:
+        - Products
+  /products/slug/{slug}:
+    get:
+      summary: Get a single product by slug
+      description: Retrieve details of a specific product by its slug.
+      operationId: getProductBySlug
+      parameters:
+        - name: slug
+          in: path
+          description: Slug of the product
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful response with product details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+        "404":
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+      tags:
+        - Products
+  /products/{id}/related:
+    get:
+      summary: Get related products
+      description: Retrieve a list of products related to a specific product by its ID.
+      operationId: getRelatedProducts
+      parameters:
+        - name: id
+          in: path
+          description: ID of the product
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successful response with related products
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Product"
+        "404":
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+      tags:
+        - Products
+  /categories:
+    get:
+      summary: List all categories
+      description: Retrieve a list of product categories.
+      operationId: getCategories
+      responses:
+        "200":
+          description: Successful response with a list of categories
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Category"
+      tags:
+        - Categories
+  /users:
+    get:
+      summary: List all users
+      description: Retrieve a list of users. Requires JWT authentication.
+      operationId: getUsers
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Successful response with a list of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+      tags:
+        - Users
+  /auth/login:
+    post:
+      summary: User login
+      description: Authenticate a user and return a JWT token.
+      operationId: login
+      requestBody:
+        description: User credentials
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          description: Successful login with JWT token
+          headers:
+            Authorization:
+              description: JWT Bearer token
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResponse"
+        "401":
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+      tags:
+        - Authentication
+  /auth/profile:
+    get:
+      summary: Perfil do usuário autenticado
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Dados do perfil
+          content:
+            application/json:
+              $ref: "#/components/schemas/User"
+      tags:
+        - Authentication
 
 components:
   schemas:
-    Category:
-      type: object
-      properties:
-        id:
-          type: integer
-        name:
-          type: string
-        slug:
-          type: string
-        image:
-          type: string
     Product:
       type: object
       properties:
         id:
           type: integer
+          description: Unique identifier for the product
         title:
           type: string
+          description: Name of the product
         slug:
           type: string
+          description: URL-friendly identifier for the product
         price:
           type: number
+          description: Price of the product
         description:
           type: string
+          description: Description of the product
+        category:
+          $ref: "#/components/schemas/Category"
         images:
           type: array
           items:
             type: string
-        category:
-          $ref: "#/components/schemas/Category"
-    ProductCreate:
+          description: List of image URLs for the product
+      required:
+        - id
+        - title
+        - slug
+        - price
+        - description
+        - category
+        - images
+    ProductUpdate:
       type: object
-      required: [title, price, description, categoryId]
       properties:
         title:
           type: string
+          description: Name of the product
         price:
           type: number
+          description: Price of the product
         description:
           type: string
+          description: Description of the product
         categoryId:
           type: integer
+          description: ID of the product category
+        images:
+          type: array
+          items:
+            type: string
+          description: List of image URLs for the product
+    Category:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique identifier for the category
+        name:
+          type: string
+          description: Name of the category
+        image:
+          type: string
+          description: URL of the category image
+        slug:
+          type: string
+          description: URL-friendly identifier for the category
+      required:
+        - id
+        - name
+        - image
+        - slug
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique identifier for the user
+        email:
+          type: string
+          description: Email address of the user
+        name:
+          type: string
+          description: Name of the user
+      required:
+        - id
+        - email
+        - name
+    LoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          description: User email
+        password:
+          type: string
+          description: User password
+      required:
+        - email
+        - password
+    LoginResponse:
+      type: object
+      properties:
+        access_token:
+          type: string
+          description: JWT access token
+        refresh_token:
+          type: string
+          description: JWT refresh token
+      required:
+        - access_token
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Error message
+        status:
+          type: integer
+          description: HTTP status code
+      required:
+        - message
+        - status
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+tags:
+  - name: Products
+    description: Operations related to products
+  - name: Categories
+    description: Operations related to product categories
+  - name: Users
+    description: Operations related to users
+  - name: Authentication
+    description: Operations related to user authentication
