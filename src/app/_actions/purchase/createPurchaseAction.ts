@@ -32,9 +32,7 @@ export async function createPurchaseAction(
 
   const validatedData = createPurchaseSchema.parse(data)
 
-  console.log("Supabase User ID:", supabaseUser.id)
   const user = await userService.getUserByIds(undefined, supabaseUser.id)
-  console.log("Prisma User found:", user)
 
   if (!user) {
     throw new Error("User not found in database")

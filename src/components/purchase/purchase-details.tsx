@@ -35,7 +35,7 @@ export const PurchaseDetails = ({
 
       <div className="space-y-4">
         <h3 className="text-xl font-semibold border-t pt-4">Itens</h3>
-        {[...purchase.productItems, ...purchase.productItems].map((item) => (
+        {purchase.productItems.map((item) => (
           <div key={item.id} className="flex items-center gap-4 border-b pb-2">
             <Link href={`/products/${item.productId}`}>
               <Image
