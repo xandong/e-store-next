@@ -3,7 +3,12 @@
 import { createServerClient } from "@supabase/ssr"
 import { NextResponse, type NextRequest } from "next/server"
 import { getSupabaseEnvironment } from "./common"
-import { authRoutes, publicRoutes, signInPath } from "../../utils/routes"
+import {
+  authRoutes,
+  privateRoutes,
+  publicRoutes,
+  signInPath
+} from "../../utils/routes"
 
 export async function updateSession(request: NextRequest) {
   const supabaseResponse = NextResponse.next({
@@ -48,6 +53,9 @@ export async function updateSession(request: NextRequest) {
     !authRoutes.some((authR) => request.nextUrl.pathname.startsWith(authR)) &&
     !publicRoutes.some((publicR) =>
       request.nextUrl.pathname.startsWith(publicR)
+    ) &&
+    privateRoutes.some((privateR) =>
+      request.nextUrl.pathname.startsWith(privateR)
     )
   ) {
     // no user, potentially respond by redirecting the user to the login page

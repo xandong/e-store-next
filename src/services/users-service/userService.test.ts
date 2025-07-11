@@ -42,16 +42,16 @@ describe("UserService", () => {
   describe("getUserById", () => {
     it("should return user data when found", async () => {
       const mockUser = {
-        id: 1,
+        id: "1",
         name: "John Doe",
         email: "john.doe@example.com"
       }
       ;(mockPrisma.user.findUnique as jest.Mock).mockResolvedValue(mockUser)
 
-      const result = await userService.getUserByIds(1)
+      const result = await userService.getUserByIds("1")
 
       expect(mockPrisma.user.findUnique).toHaveBeenCalledWith({
-        where: { id: 1 }
+        where: { id: "1" }
       })
       expect(result).toEqual(mockUser)
     })
@@ -59,10 +59,10 @@ describe("UserService", () => {
     it("should return null when user not found", async () => {
       ;(mockPrisma.user.findUnique as jest.Mock).mockResolvedValue(null)
 
-      const result = await userService.getUserByIds(99)
+      const result = await userService.getUserByIds("99")
 
       expect(mockPrisma.user.findUnique).toHaveBeenCalledWith({
-        where: { id: 99 }
+        where: { id: "99" }
       })
       expect(result).toBeNull()
     })
@@ -73,11 +73,11 @@ describe("UserService", () => {
         new Error(errorMessage)
       )
 
-      await expect(userService.getUserByIds(1)).rejects.toThrow(
+      await expect(userService.getUserByIds("1")).rejects.toThrow(
         "Não foi possível buscar o usuário."
       )
       expect(mockPrisma.user.findUnique).toHaveBeenCalledWith({
-        where: { id: 1 }
+        where: { id: "1" }
       })
     })
   })
@@ -85,8 +85,8 @@ describe("UserService", () => {
   describe("getUserList", () => {
     it("should return a list of users when found", async () => {
       const mockUsers = [
-        { id: 1, name: "John Doe", email: "john.doe@example.com" },
-        { id: 2, name: "Jane Smith", email: "jane.smith@example.com" }
+        { id: "1", name: "John Doe", email: "john.doe@example.com" },
+        { id: "2", name: "Jane Smith", email: "jane.smith@example.com" }
       ]
       ;(mockPrisma.user.findMany as jest.Mock).mockResolvedValue(mockUsers)
 

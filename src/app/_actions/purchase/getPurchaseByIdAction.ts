@@ -3,6 +3,7 @@
 import { purchaseService } from "@/services/purchase-service"
 import { userService } from "@/services/users-service"
 import { createClient } from "@/services/supabase/server"
+import { redirect } from "next/navigation"
 
 export async function getPurchaseByIdAction(purchaseId: string) {
   const supabase = await createClient()
@@ -11,7 +12,7 @@ export async function getPurchaseByIdAction(purchaseId: string) {
   } = await supabase.auth.getUser()
 
   if (!supabaseUser) {
-    throw new Error("User not authenticated")
+    redirect("/sign-in")
   }
 
   const user = await userService.getUserByIds(undefined, supabaseUser.id)

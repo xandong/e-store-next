@@ -21,15 +21,16 @@ const createPurchaseSchema = z.object({
 export async function createPurchaseAction(
   data: z.infer<typeof createPurchaseSchema>
 ) {
-  const validatedData = createPurchaseSchema.parse(data)
   const supabase = await createClient()
   const {
     data: { user: supabaseUser }
   } = await supabase.auth.getUser()
 
   if (!supabaseUser) {
-    throw new Error("User not authenticated")
+    redirect("/sign-in")
   }
+
+  const validatedData = createPurchaseSchema.parse(data)
 
   console.log("Supabase User ID:", supabaseUser.id)
   const user = await userService.getUserByIds(undefined, supabaseUser.id)

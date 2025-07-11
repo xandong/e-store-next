@@ -4,6 +4,7 @@
 import { createContext, useContext, ReactNode, useState } from "react"
 import useSWR from "swr"
 import { Cart, Product, ProductItem } from "@/types/prisma/generated"
+import { createClient } from "@/services/supabase/client"
 
 export interface ProductItemType extends ProductItem {
   product: Product
@@ -46,12 +47,21 @@ const fetcher = async (url: string) => {
 }
 
 export function CartProvider({ children }: { children: ReactNode }) {
+  const supabase = createClient()
+
+  const { data: user } = useSWR("auth-user", async () => {
+    const {
+      data: { user }
+    } = await supabase.auth.getUser()
+    return user
+  })
+
   const {
     data: cart,
     error,
     isLoading,
     mutate: revalidateCart
-  } = useSWR<CartType>("/api/cart", fetcher, {
+  } = useSWR<CartType>(user ? "/api/cart" : null, fetcher, {
     fallback: {
       id: "temp-" + Date.now()
     } as CartType
