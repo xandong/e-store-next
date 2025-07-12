@@ -6,7 +6,7 @@ import { revalidatePath } from "next/cache"
 import { Product } from "@/types/prisma/generated"
 
 const createProductSchema = z.object({
-  title: z.string(),
+  title: z.string().min(1),
   slug: z.string(),
   price: z.number(),
   description: z.string().optional(),

@@ -22,11 +22,11 @@ export const metadata: Metadata = {
     title: "eStore - Sua Loja Online",
     description:
       "Encontre os melhores jogos para todas as plataformas. Compre online com segurança e rapidez na eStore.",
-    url: "https://www.eStore.com.br",
+    url: "https://e-store-br.vercel.app",
     siteName: "eStore",
     images: [
       {
-        url: "https://www.eStore.com.br/logo.png",
+        url: "https://e-store-br.vercel.app/logo.png",
         width: 800,
         height: 600,
         alt: "Logo eStore"
@@ -39,9 +39,9 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "eStore - Sua Loja Online",
     description:
-      "Encontre os melhores jogos para todas as plataformas. Compre online com segurança e rapidez na eStore.",
+      "Encontre os melhores peças de roupa e acessórios. Compre online com segurança e rapidez na eStore.",
     creator: "@xandongurgel",
-    images: ["https://www.eStore.com.br/logo.png"]
+    images: ["https://e-store-br.vercel.app/logo.png"]
   }
 }
 

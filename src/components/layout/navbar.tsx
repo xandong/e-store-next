@@ -41,7 +41,7 @@ export const Navbar = ({ user }: { user: User | null }) => {
     <nav>
       <ul className="flex items-center gap-2">
         <div className="flex items-center pr-2">
-          <Cart />
+          <Cart user={user} />
         </div>
 
         {user ? (
@@ -68,11 +68,15 @@ export const Navbar = ({ user }: { user: User | null }) => {
                   <MenubarSeparator />
 
                   <MenubarItem>
-                    <Link href="/me">Favoritos</Link>
+                    <Link href="/cart" className="w-full">
+                      Carrinho
+                    </Link>
                   </MenubarItem>
 
                   <MenubarItem>
-                    <Link href="/create">Minhas compras</Link>
+                    <Link href="/purchases" className="w-full">
+                      Minhas compras
+                    </Link>
                   </MenubarItem>
 
                   <MenubarItem asChild disabled>

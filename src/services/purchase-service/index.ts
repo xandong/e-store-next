@@ -1,6 +1,6 @@
 import { PrismaClient, PurchaseStatus } from "@/types/prisma/generated"
 import { prisma } from "@/lib/prisma"
-
+import { createClient } from "../supabase/server"
 export class PurchaseService {
   private prisma: PrismaClient
 
@@ -8,11 +8,18 @@ export class PurchaseService {
     this.prisma = prismaClient as PrismaClient
   }
 
-  async getPurchaseById(id: string) {
+  async getUserExternalId() {
+    const supabase = await createClient()
+    const { data } = await supabase.auth.getUser()
+    return data.user?.id
+  }
+
+  async getPurchaseById(id: string, userId: string) {
     try {
       const purchase = await this.prisma.purchase.findUnique({
         where: {
-          id
+          id,
+          userId
         },
         include: {
           productItems: {
@@ -29,7 +36,7 @@ export class PurchaseService {
     }
   }
 
-  async getPurchasesByUserId(userId: number) {
+  async getPurchasesByUserId(userId: string) {
     try {
       const purchases = await this.prisma.purchase.findMany({
         where: {
@@ -51,90 +58,105 @@ export class PurchaseService {
   }
 
   async createPurchase(
-    userId: number,
+    userId: string,
     items: { productItemId?: string; productId?: string; quantity?: number }[],
     cartId?: string
   ) {
     return this.prisma.$transaction(async (tx) => {
-      try {
-        // 1. Separar os itens a conectar (já existem) e os a criar
-        const itemsToConnect = items.filter((item) => item.productItemId)
-        const itemsToCreate = items.filter(
-          (item) => !item.productItemId && item.productId && item.quantity
-        )
+      const itemsToConnect = items.filter((item) => item.productItemId)
+      const itemsToCreate = items.filter(
+        (item) => !item.productItemId && item.productId && item.quantity
+      )
 
-        // 2. Validação básica
-        for (const item of itemsToCreate) {
-          if (!item.productId || !item.quantity) {
-            throw new Error("Itens a criar devem conter productId e quantity.")
+      for (const item of itemsToCreate) {
+        if (!item.productId || !item.quantity) {
+          throw new Error("Itens a criar devem conter productId e quantity.")
+        }
+      }
+
+      // Criar novos ProductItems com base nos produtos
+      const createdProductItems = await Promise.all(
+        itemsToCreate.map(async (item) => {
+          const product = await tx.product.findUnique({
+            where: { id: item.productId! }
+          })
+
+          if (!product) {
+            throw new Error(`Produto com id ${item.productId} não encontrado.`)
+          }
+
+          return tx.productItem.create({
+            data: {
+              productId: item.productId!,
+              quantity: item.quantity!,
+              price: product.price
+            }
+          })
+        })
+      )
+
+      let itemsToConnectTotal = 0
+
+      if (itemsToConnect.length > 0) {
+        for (const item of itemsToConnect) {
+          const productItem = await tx.productItem.findUnique({
+            where: { id: item.productItemId! }
+          })
+
+          if (!productItem) {
+            throw new Error(
+              `ProductItem com id ${item.productItemId} não encontrado.`
+            )
+          }
+          itemsToConnectTotal += productItem.price * productItem.quantity
+        }
+      }
+
+      const total =
+        createdProductItems.reduce(
+          (acc, item) => acc + item.price * item.quantity,
+          0
+        ) + itemsToConnectTotal
+
+      // Criar a compra com os itens conectados e criados
+      const purchase = await tx.purchase.create({
+        data: {
+          userId,
+          status: PurchaseStatus.PENDING,
+          total,
+          productItems: {
+            connect: itemsToConnect.map((item) => ({
+              id: item.productItemId!
+            })),
+            createMany: {
+              data: createdProductItems.map((item) => ({
+                productId: item.productId,
+                quantity: item.quantity,
+                price: item.price
+              }))
+            }
           }
         }
+      })
 
-        // 3. Criar novos ProductItems com base nos produtos
-        const createdProductItems = await Promise.all(
-          itemsToCreate.map(async (item) => {
-            const product = await tx.product.findUnique({
-              where: { id: item.productId! }
-            })
-
-            if (!product) {
-              throw new Error(
-                `Produto com id ${item.productId} não encontrado.`
-              )
-            }
-
-            return tx.productItem.create({
-              data: {
-                productId: item.productId!,
-                quantity: item.quantity!,
-                price: product.price
-              }
-            })
-          })
-        )
-
-        // 4. Criar a compra com os itens conectados e criados
-        const purchase = await tx.purchase.create({
+      // Se veio de um carrinho, remover os itens conectados dele
+      if (cartId && itemsToConnect.length > 0) {
+        await tx.cart.update({
+          where: { id: cartId },
           data: {
-            userId,
-            status: PurchaseStatus.PENDING,
-            productItems: {
-              connect: itemsToConnect.map((item) => ({
+            items: {
+              disconnect: itemsToConnect.map((item) => ({
                 id: item.productItemId!
-              })),
-              connectOrCreate: [],
-              createMany: {
-                data: createdProductItems.map((item) => ({
-                  productId: item.productId,
-                  quantity: item.quantity,
-                  price: item.price
-                }))
-              }
+              }))
             }
           }
         })
-
-        // 5. Se veio de um carrinho, remover os itens conectados dele
-        if (cartId && itemsToConnect.length > 0) {
-          await tx.cart.update({
-            where: { id: cartId },
-            data: {
-              items: {
-                disconnect: itemsToConnect.map((item) => ({
-                  id: item.productItemId!
-                }))
-              }
-            }
-          })
-        }
-
-        return purchase
-      } catch (error) {
-        console.error("Falha ao criar compra:", error)
-        throw new Error("Falha ao criar compra.")
       }
+
+      return purchase
     })
   }
+
   async updatePurchaseStatus(id: string, status: PurchaseStatus) {
     try {
       const updatedPurchase = await this.prisma.purchase.update({

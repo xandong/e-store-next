@@ -3,7 +3,6 @@
 import { ShoppingCartIcon } from "lucide-react"
 
 import { useCart } from "@/context/cart-context"
-import { numberToCurrency } from "@/utils/formatters"
 
 import {
   Sheet,
@@ -13,16 +12,36 @@ import {
   SheetTitle,
   SheetTrigger
 } from "../_ui/sheet"
-import { Button } from "../_ui/button"
-import { CartCardItem } from "./cartCardItem"
+import { CartInfo } from "./cart-info"
+import { User } from "@supabase/supabase-js"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
+import { useEffect } from "react"
 
-export const Cart = () => {
-  const { cart, total, open, setOpen } = useCart()
+export const Cart = ({ user }: { user: User | null }) => {
+  const pathname = usePathname()
+  const { cart, open, setOpen } = useCart()
 
   const isEmpty = !cart || cart.items.length === 0
 
+  useEffect(() => {
+    if (pathname === "/cart") {
+      setOpen(false)
+    }
+  }, [pathname, setOpen])
+
   return (
-    <Sheet open={open} onOpenChange={setOpen}>
+    <Sheet
+      open={open}
+      onOpenChange={(e) => {
+        if (pathname === "/cart") {
+          setOpen(false)
+          return
+        }
+
+        setOpen(e)
+      }}
+    >
       <SheetTrigger>
         <div className="relative">
           <ShoppingCartIcon className="text-zinc-700 w-6 h-6" />
@@ -43,30 +62,30 @@ export const Cart = () => {
           </SheetDescription>
         </SheetHeader>
 
-        {!isEmpty && (
+        {user ? (
           <>
-            <div className="flex-1 overflow-y-auto mt-4 flex flex-col gap-4">
-              {cart.items
-                .sort(
-                  (a, b) =>
-                    new Date(b.createdAt).getTime() -
-                    new Date(a.createdAt).getTime()
-                )
-                .map((item) => (
-                  <CartCardItem key={item.product.id} item={item} />
-                ))}
-            </div>
-
-            <div className="border-t pt-4 mt-4 space-y-2">
-              <div className="flex justify-between text-sm text-muted-foreground">
-                <span>Total</span>
-                <span className="text-base font-semibold text-foreground">
-                  {numberToCurrency(total)}
+            {isEmpty ? (
+              <div className="flex w-full justify-center items-center mt-10">
+                <span className="text-sm text-muted-foreground text-center">
+                  Nenhum produto adicionado ainda
                 </span>
               </div>
-              <Button className="w-full mt-2">Finalizar compra</Button>
-            </div>
+            ) : (
+              <CartInfo />
+            )}
           </>
+        ) : (
+          <div className="flex w-full justify-center items-center mt-10">
+            <span className="text-sm text-muted-foreground text-center">
+              <Link
+                href="/sign-in"
+                className="text-primary underline underline-offset-2"
+              >
+                Entre
+              </Link>{" "}
+              em uma conta para adicionar produtos ao carrinho.
+            </span>
+          </div>
         )}
       </SheetContent>
     </Sheet>

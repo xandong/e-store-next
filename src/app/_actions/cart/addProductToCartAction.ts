@@ -4,6 +4,7 @@ import { z } from "zod"
 import { cartService } from "@/services/cart-service"
 import { revalidatePath } from "next/cache"
 import { createClient } from "@/services/supabase/server"
+import { redirect } from "next/navigation"
 
 const addProductToCartSchema = z.object({
   productId: z.string(),
@@ -15,17 +16,18 @@ export async function addProductToCartAction(
   quantity: number
 ) {
   const validatedData = addProductToCartSchema.parse({ productId, quantity })
-  const client = await createClient()
-  const {
-    data: { user }
-  } = await client.auth.getUser()
 
-  if (!user) {
-    throw new Error("User not authenticated")
+  const supabase = await createClient()
+  const {
+    data: { user: supabaseUser }
+  } = await supabase.auth.getUser()
+
+  if (!supabaseUser) {
+    redirect("/sign-in")
   }
 
   const cartItem = await cartService.addProductToCart(
-    user.id,
+    supabaseUser.id,
     validatedData.productId,
     validatedData.quantity
   )

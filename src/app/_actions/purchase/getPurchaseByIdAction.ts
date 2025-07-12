@@ -1,13 +1,31 @@
 "use server"
 
-import { z } from "zod"
 import { purchaseService } from "@/services/purchase-service"
+import { userService } from "@/services/users-service"
+import { createClient } from "@/services/supabase/server"
+import { redirect } from "next/navigation"
 
-const getPurchaseByIdSchema = z.object({
-  id: z.string()
-})
+export async function getPurchaseByIdAction(purchaseId: string) {
+  const supabase = await createClient()
+  const {
+    data: { user: supabaseUser }
+  } = await supabase.auth.getUser()
 
-export async function getPurchaseByIdAction(id: string) {
-  const validatedId = getPurchaseByIdSchema.parse({ id })
-  return await purchaseService.getPurchaseById(validatedId.id)
+  if (!supabaseUser) {
+    redirect("/sign-in")
+  }
+
+  const user = await userService.getUserByIds(undefined, supabaseUser.id)
+
+  if (!user) {
+    throw new Error("User not found in database")
+  }
+
+  const purchase = await purchaseService.getPurchaseById(purchaseId, user.id)
+
+  if (!purchase) {
+    throw new Error("Purchase not found")
+  }
+
+  return purchase
 }

@@ -19,6 +19,7 @@ O eStore é uma plataforma de comércio eletrônico que permite aos usuários na
 
 - **Framework:** [Next.js](https://nextjs.org/) (React)
   - Utilizado para construir a interface do usuário e fornecer funcionalidades de full-stack, incluindo Server Components, roteamento baseado em arquivos e API Routes.
+  - **Estratégias de Renderização:** Adota Server-Side Rendering (SSR) por padrão para rotas dinâmicas e Server Components, e Static Site Generation (SSG) para páginas como `/sign-in` e `/sign-up`, otimizando a performance e o SEO.
 - **ORM (Object-Relational Mapping):** [Prisma](https://www.prisma.io/)
   - Oferece acesso seguro a dados, gerenciamento de esquemas de banco de dados e migrações, garantindo tipagem forte entre o código e o banco de dados.
 - **Autenticação:** [Supabase](https://supabase.com/)
@@ -39,8 +40,12 @@ O eStore é uma plataforma de comércio eletrônico que permite aos usuários na
   - **Prisma:** ORM que interage diretamente com o banco de dados PostgreSQL.
 - **Geração de Código:** `openapi-generator-cli`
   - Utilizado para gerar tipos de API a partir de uma especificação OpenAPI, garantindo consistência e segurança de tipo nas chamadas de API.
-- **Testes:** [Jest](https://jestjs.io/) e [React Testing Library](https://testing-library.com/react/)
-  - Para testes unitários e de integração, garantindo a qualidade do código.
+- **Testes:** [Jest](https://jestjs.io/)
+  - **Testes Unitários:** Focados na camada de `Services`, garantindo que a lógica de interação com o banco de dados (Prisma) funcione corretamente de forma isolada.
+    - Exemplo: `npm test -- src/services/users-service/userService.test.ts`
+  - **Testes de Integração:** Abrangem as `Server Actions`, verificando a orquestração da lógica de negócios, autenticação, validação e chamadas aos serviços.
+    - Exemplo: `npm test -- src/app/_actions/auth/login.test.ts`
+  - Garantem a qualidade e a robustez do código.
 - **Qualidade de Código:** ESLint, Prettier, Husky, lint-staged
   - Ferramentas para manter um código limpo, formatado e consistente em todo o projeto.
 
@@ -109,9 +114,9 @@ npm run seed
 - `npx prisma migrate dev --name init`: Cria e aplica as migrações do banco de dados. O nome `init` pode ser alterado.
 - `npm run seed`: Executa o script `prisma/seed.ts` para popular o banco de dados com dados de exemplo.
 
-### 6. Gerar Tipos de API (Opcional, mas recomendado)
+### 6. Gerar Tipos de API (Opcional, usado apenas para desenvolvimento)
 
-Se houver alterações na especificação OpenAPI (`openapi/api.yaml`), você pode gerar os tipos de API (Não é mais utilizada, não estava retornando mais os products):
+Se houver alterações na especificação OpenAPI (`openapi/api.yaml`), você pode gerar os tipos de API:
 
 ```bash
 npm run generate:types

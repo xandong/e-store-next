@@ -4,6 +4,7 @@
 import { createContext, useContext, ReactNode, useState } from "react"
 import useSWR from "swr"
 import { Cart, Product, ProductItem } from "@/types/prisma/generated"
+import { createClient } from "@/services/supabase/client"
 
 export interface ProductItemType extends ProductItem {
   product: Product
@@ -46,12 +47,21 @@ const fetcher = async (url: string) => {
 }
 
 export function CartProvider({ children }: { children: ReactNode }) {
+  const supabase = createClient()
+
+  const { data: user } = useSWR("auth-user", async () => {
+    const {
+      data: { user }
+    } = await supabase.auth.getUser()
+    return user
+  })
+
   const {
     data: cart,
     error,
     isLoading,
     mutate: revalidateCart
-  } = useSWR<CartType>("/api/cart", fetcher, {
+  } = useSWR<CartType>(user ? "/api/cart" : null, fetcher, {
     fallback: {
       id: "temp-" + Date.now()
     } as CartType
@@ -74,52 +84,86 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setLoading(true)
     const prevCart = { ...cart }
 
-    const optimisticCart: CartType = {
-      ...cart,
-      items: [
-        ...cart.items,
-        {
-          cartId: cart.id,
-          id: "temp-" + Date.now(),
-          price,
-          quantity,
-          productId,
-          product: {
-            title,
-            price,
-            id: "temp-" + Date.now(),
-            slug: "",
-            description: null,
-            images: [],
-            externalId: null,
-            categoryId: null,
-            createdAt: new Date()
-          },
-          createdAt: new Date(),
-          purchaseId: null
+    const existingItem = cart.items.find((item) => item.productId === productId)
+
+    if (existingItem) {
+      const newQuantity = existingItem.quantity + quantity
+      const optimisticCart: CartType = {
+        ...cart,
+        items: cart.items.map((item) =>
+          item.id === existingItem.id
+            ? { ...item, quantity: newQuantity }
+            : item
+        )
+      }
+      revalidateCart(optimisticCart, false)
+
+      try {
+        const res = await fetch(`/api/cart/items/${existingItem.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ quantity: newQuantity })
+        })
+
+        if (!res.ok) {
+          throw new Error("Erro ao atualizar quantidade do item")
         }
-      ]
-    }
 
-    revalidateCart(optimisticCart, false)
-
-    try {
-      const response = await fetch("/api/cart/items", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ productId, quantity })
-      })
-
-      if (!response.ok) {
-        throw new Error("Erro ao adicionar ao carrinho")
+        await revalidateCart()
+      } catch (err) {
+        console.error("Erro ao atualizar item:", err)
+        revalidateCart(prevCart, false)
+      } finally {
+        setLoading(false)
+      }
+    } else {
+      const optimisticCart: CartType = {
+        ...cart,
+        items: [
+          ...cart.items,
+          {
+            cartId: cart.id,
+            id: "temp-" + Date.now(),
+            price,
+            quantity,
+            productId,
+            product: {
+              title,
+              price,
+              id: "temp-" + Date.now(),
+              slug: "",
+              description: null,
+              images: [],
+              externalId: null,
+              categoryId: null,
+              createdAt: new Date()
+            },
+            createdAt: new Date(),
+            purchaseId: null
+          }
+        ]
       }
 
-      await revalidateCart()
-    } catch (err) {
-      console.error("Erro ao adicionar item:", err)
-      revalidateCart(prevCart, false)
-    } finally {
-      setLoading(false)
+      revalidateCart(optimisticCart, false)
+
+      try {
+        const response = await fetch("/api/cart/items", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ productId, quantity })
+        })
+
+        if (!response.ok) {
+          throw new Error("Erro ao adicionar ao carrinho")
+        }
+
+        await revalidateCart()
+      } catch (err) {
+        console.error("Erro ao adicionar item:", err)
+        revalidateCart(prevCart, false)
+      } finally {
+        setLoading(false)
+      }
     }
   }
 

@@ -5,6 +5,7 @@ import { redirect } from "next/navigation"
 import { z } from "zod"
 
 import { createClient } from "@/services/supabase/server"
+import { userService } from "@/services/users-service"
 
 const signInSchema = z.object({
   email: z
@@ -20,7 +21,22 @@ export async function loginAction(formData: SignInSchema) {
 
   const supabase = await createClient()
 
-  const { error } = await supabase.auth.signInWithPassword(data)
+  const {
+    error,
+    data: { user }
+  } = await supabase.auth.signInWithPassword(data)
+
+  if (user) {
+    const response = await userService.getUserByIds(undefined, user.id)
+
+    if (!response) {
+      await userService.createUser({
+        externalId: user.id,
+        email: data.email,
+        name: user.user_metadata.name
+      })
+    }
+  }
 
   if (error) {
     console.error({ error })

@@ -5,7 +5,7 @@ import { productService } from "@/services/products-service"
 import { revalidatePath } from "next/cache"
 
 const deleteProductSchema = z.object({
-  id: z.string()
+  id: z.string().min(1)
 })
 
 export async function deleteProductAction(id: string) {

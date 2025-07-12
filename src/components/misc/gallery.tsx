@@ -38,7 +38,7 @@ export const Gallery: React.FC<GalleryProps> = ({ images }) => {
 
   return (
     <div className="relative space-y-2">
-      <span className="absolute top-4 right-4 text-white/80 bg-black/30 bg-opacity-50 rounded-full px-3 py-1 z-10">
+      <span className="absolute top-4 right-4 text-white bg-black/35 bg-opacity-50 rounded-full px-3 py-1 z-10 text-sm">
         {current} / {count}
       </span>
 
