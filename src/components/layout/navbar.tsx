@@ -41,7 +41,7 @@ export const Navbar = ({ user }: { user: User | null }) => {
     <nav>
       <ul className="flex items-center gap-2">
         <div className="flex items-center pr-2">
-          <Cart />
+          <Cart user={user} />
         </div>
 
         {user ? (

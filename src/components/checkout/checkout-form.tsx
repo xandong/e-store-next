@@ -1,13 +1,16 @@
 "use client"
 
-import { useCart } from "@/context/cart-context"
-import { Button } from "@/components/_ui/button"
-import { createPurchaseAction } from "@/app/_actions/purchase/createPurchaseAction"
 import { useState } from "react"
+import Image from "next/image"
 import { toast } from "sonner"
 import { Loader2 } from "lucide-react"
+
+import { useCart } from "@/context/cart-context"
+import { createPurchaseAction } from "@/app/_actions/purchase/createPurchaseAction"
 import { numberToCurrency } from "@/utils/formatters"
-import Image from "next/image"
+
+import { Button } from "@/components/_ui/button"
+import Link from "next/link"
 
 export function CheckoutForm() {
   const { cart, total, isLoading, actionsLoading, revalidateCart } = useCart()
@@ -51,7 +54,14 @@ export function CheckoutForm() {
 
   return (
     <div className="p-4 border rounded-lg shadow-md bg-white/80">
-      <h2 className="text-2xl font-bold mb-4">Seu Pedido</h2>
+      <div className="flex items-start justify-between">
+        <h2 className="text-2xl font-bold mb-4">Seu Pedido</h2>
+
+        <Button asChild variant={"link"}>
+          <Link href={"/cart"}>Editar</Link>
+        </Button>
+      </div>
+
       <div className="space-y-2 mb-4">
         {cart.items.map((item) => (
           <div key={item.id} className="flex justify-between items-center">
@@ -83,7 +93,7 @@ export function CheckoutForm() {
         className="w-full mt-6"
         disabled={loading || actionsLoading}
       >
-        {loading ? <Loader2 className="animate-spin" /> : "Comprar"}
+        {loading ? <Loader2 className="animate-spin" /> : "Pagar"}
       </Button>
     </div>
   )

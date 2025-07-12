@@ -1,3 +1,4 @@
+/* eslint-disable no-extra-semi */
 // src/app/_actions/products/deleteProductAction.test.ts
 
 // Mock external dependencies

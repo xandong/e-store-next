@@ -1,3 +1,4 @@
+/* eslint-disable no-extra-semi */
 // src/app/_actions/cart/addProductToCartAction.test.ts
 
 // Mock external dependencies
@@ -57,7 +58,7 @@ describe("addProductToCartAction", () => {
 
     // Assertions
     expect(createClient).toHaveBeenCalledTimes(1)
-    expect(createClient().auth.getUser).toHaveBeenCalledTimes(1)
+    expect((await createClient()).auth.getUser).toHaveBeenCalledTimes(1)
     expect(cartService.addProductToCart).toHaveBeenCalledWith(
       mockSupabaseUserId,
       mockProductId,
@@ -82,7 +83,7 @@ describe("addProductToCartAction", () => {
 
     // Assertions
     expect(createClient).toHaveBeenCalledTimes(1)
-    expect(createClient().auth.getUser).toHaveBeenCalledTimes(1)
+    expect((await createClient()).auth.getUser).toHaveBeenCalledTimes(1)
     expect(redirect).toHaveBeenCalledWith("/sign-in")
     expect(cartService.addProductToCart).not.toHaveBeenCalled()
     expect(revalidatePath).not.toHaveBeenCalled()
@@ -127,7 +128,7 @@ describe("addProductToCartAction", () => {
 
     // Assertions
     expect(createClient).toHaveBeenCalledTimes(1)
-    expect(createClient().auth.getUser).toHaveBeenCalledTimes(1)
+    expect((await createClient()).auth.getUser).toHaveBeenCalledTimes(1)
     expect(cartService.addProductToCart).toHaveBeenCalledWith(
       mockSupabaseUserId,
       mockProductId,

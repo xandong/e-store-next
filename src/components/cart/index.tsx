@@ -13,15 +13,35 @@ import {
   SheetTrigger
 } from "../_ui/sheet"
 import { CartInfo } from "./cart-info"
+import { User } from "@supabase/supabase-js"
 import Link from "next/link"
+import { useParams, usePathname } from "next/navigation"
+import { useEffect } from "react"
 
-export const Cart = () => {
+export const Cart = ({ user }: { user: User | null }) => {
+  const pathname = usePathname()
   const { cart, open, setOpen } = useCart()
 
   const isEmpty = !cart || cart.items.length === 0
 
+  useEffect(() => {
+    if (pathname === "/cart") {
+      setOpen(false)
+    }
+  }, [pathname])
+
   return (
-    <Sheet open={open} onOpenChange={setOpen}>
+    <Sheet
+      open={open}
+      onOpenChange={(e) => {
+        if (pathname === "/cart") {
+          setOpen(false)
+          return
+        }
+
+        setOpen(e)
+      }}
+    >
       <SheetTrigger>
         <div className="relative">
           <ShoppingCartIcon className="text-zinc-700 w-6 h-6" />
@@ -42,7 +62,19 @@ export const Cart = () => {
           </SheetDescription>
         </SheetHeader>
 
-        {isEmpty ? (
+        {user ? (
+          <>
+            {isEmpty ? (
+              <div className="flex w-full justify-center items-center mt-10">
+                <span className="text-sm text-muted-foreground text-center">
+                  Nenhum produto adicionado ainda
+                </span>
+              </div>
+            ) : (
+              <CartInfo />
+            )}
+          </>
+        ) : (
           <div className="flex w-full justify-center items-center mt-10">
             <span className="text-sm text-muted-foreground text-center">
               <Link
@@ -54,8 +86,6 @@ export const Cart = () => {
               em uma conta para adicionar produtos ao carrinho.
             </span>
           </div>
-        ) : (
-          <CartInfo />
         )}
       </SheetContent>
     </Sheet>
