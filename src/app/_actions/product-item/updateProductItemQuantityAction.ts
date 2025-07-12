@@ -5,7 +5,7 @@ import { productItemService } from "@/services/product-item-service"
 import { revalidatePath } from "next/cache"
 
 const updateProductItemQuantitySchema = z.object({
-  productItemId: z.string(),
+  productItemId: z.string().min(1),
   quantity: z.number().min(1)
 })
 

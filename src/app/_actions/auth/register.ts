@@ -29,11 +29,12 @@ type SignUpSchema = z.infer<typeof signUpSchema>
 export async function signupAction(
   formData: SignUpSchema
 ): Promise<{ error: undefined | string; confirmation_sent: boolean }> {
-  const data = signUpSchema.parse(formData)
-
-  if (data.password !== data.confirmPassword) {
+  // Validate passwords match before Zod parsing
+  if (formData.password !== formData.confirmPassword) {
     return { error: "Passwords do not match", confirmation_sent: false }
   }
+
+  const data = signUpSchema.parse(formData)
 
   const supabase = await createClient()
 
@@ -66,10 +67,12 @@ export async function signupAction(
     }
   }
 
-  if (process.env.SUPABASE_EMAIL_CONFIRMATION !== "1") {
+  const confirmationSent = process.env.SUPABASE_EMAIL_CONFIRMATION === "1"
+
+  if (!confirmationSent) {
     revalidatePath("/", "layout")
     redirect("/")
   }
 
-  return { error: undefined, confirmation_sent: true }
+  return { error: undefined, confirmation_sent: confirmationSent }
 }

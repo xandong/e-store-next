@@ -16,6 +16,7 @@ export async function addProductToCartAction(
   quantity: number
 ) {
   const validatedData = addProductToCartSchema.parse({ productId, quantity })
+
   const supabase = await createClient()
   const {
     data: { user: supabaseUser }
