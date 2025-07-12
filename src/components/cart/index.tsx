@@ -15,7 +15,7 @@ import {
 import { CartInfo } from "./cart-info"
 import { User } from "@supabase/supabase-js"
 import Link from "next/link"
-import { useParams, usePathname } from "next/navigation"
+import { usePathname } from "next/navigation"
 import { useEffect } from "react"
 
 export const Cart = ({ user }: { user: User | null }) => {
@@ -28,7 +28,7 @@ export const Cart = ({ user }: { user: User | null }) => {
     if (pathname === "/cart") {
       setOpen(false)
     }
-  }, [pathname])
+  }, [pathname, setOpen])
 
   return (
     <Sheet
